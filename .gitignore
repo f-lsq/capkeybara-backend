@@ -1,0 +1,7 @@
+# DEPENDENCIES
+node_modules
+sessions
+.env
+
+# SENSITIVE INFORMATION
+database.json
