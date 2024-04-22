@@ -34,12 +34,17 @@ exports.up = function(db) {
       "type": "text",
     },
     "price": {
-      "type": "int",
+      "type": "decimal",
+      "precision": 10,
+      "scale": 2,
       "unsigned": true
     },
     "cost": {
-      "type": "int",
-      "unsigned": true
+      "type": "decimal",
+      "precision": 10,
+      "scale": 2,
+      "unsigned": true,
+      "notNull": true
     },
     "quantity": {
       "type": "int",
