@@ -18,7 +18,7 @@ exports.up = function(db) {
   return db.addForeignKey("products", "categories", "product_category_fk", {
     "category_id": "id"
   },{
-    onDelete: "CASCADE",
+    onDelete: "RESTRICT",
     onUpdate: "RESTRICT"
   });
 };

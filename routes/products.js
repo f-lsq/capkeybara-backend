@@ -68,8 +68,11 @@ router.get("/edit/:productId", async (req, res) => {
     required: true // make sure the product exists
   })
 
+  // Get all categories
+  const allCategories = await Category.fetchAll().map(eachCategory => [eachCategory.get("id"), eachCategory.get("name")])
+  
   // Create the product form and pre-fill all fields
-  const productForm = createProductForm();
+  const productForm = createProductForm(allCategories);
   productForm.fields.name.value = product.get("name");
   productForm.fields.description.value = product.get("description");
   productForm.fields.price.value = product.get("price");

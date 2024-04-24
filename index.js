@@ -25,12 +25,17 @@ app.use(
 
 async function main() {
   // Routes 
+
+  const userRoutes = require("./routes/users");
   const adminRoutes = require("./routes/admin");
   const productRoutes = require("./routes/products");
 
   // Use the landing routes
+  app.use("/", userRoutes);
   app.use("/admin", adminRoutes);
   app.use("/products", productRoutes);
+  
+  
 }
 
 main();
