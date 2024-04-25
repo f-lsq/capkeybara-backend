@@ -9,6 +9,18 @@
   <title>Capkeybara Admin | {{#block "title"}}{{/block}}</title>
 </head>
 <body>
+  {{#each success_messages}}
+  <div class="alert alert-success">
+    {{!-- displays each success message --}}
+    {{this}}
+  </div>
+  {{/each}}
+  {{#each error_messages}}
+    <div class="alert alert-danger">
+      {{!-- displays each error message --}}
+      {{this}}
+    </div>
+  {{/each}}
   <div class="container">
     {{#block "content"}}
   

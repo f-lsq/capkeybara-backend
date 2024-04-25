@@ -45,6 +45,9 @@ router.post("/add", (req, res) => {
       // Save the newly created product to the DB
       await product.save();
 
+      // Flash message added to current session
+      req.flash('success_messages','New product has been created successfully');
+
       res.redirect("/products/");
     },
     "empty": (form) => {
@@ -136,6 +139,7 @@ router.post('/delete/:productId', async (req, res) => {
     required: true
   })
 
+  req.flash('error_messages',`${product.get('name')} has been deleted`);
   await product.destroy();
   res.redirect("/products");
 })

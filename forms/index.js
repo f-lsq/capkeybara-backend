@@ -26,7 +26,7 @@ const bootstrapField = function (name, object) {
   return '<div class="form-group">' + label + widget + error + '</div>';
 };
 
-// Function to create a form object
+// Function to create a form object for 'Products'
 const createProductForm = (categories) => {
   // Form definition
   return forms.create({
@@ -61,6 +61,11 @@ const createProductForm = (categories) => {
       choices: categories
     }),
   }) 
+}
+
+// To create Signup / Login form for 'Admins' 
+const createAdminRegistrationForm = () => {
+  // Stopped at 4.15
 }
 
 module.exports = { createProductForm, bootstrapField }; 
