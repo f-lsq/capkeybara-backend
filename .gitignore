@@ -4,5 +4,4 @@ sessions
 .env
 
 # SENSITIVE INFORMATION
-database.json
 bookshelf/index.js

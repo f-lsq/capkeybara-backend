@@ -8,3 +8,9 @@ Sessions
 * express-session: Add session to express
 * connect-flashP: Flash message
 * session-file-store: Store sessions as files
+
+CSRF
+* csurf: Prevents Cross Site Resource Forgery (requires session)
+
+Cloudinary
+* cloudinary: For image uploading

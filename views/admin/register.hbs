@@ -1,10 +1,11 @@
-{{#extends "base"}}
+{{#extends 'base'}}
 
-{{#block "title"}}Register{{/block}}
-{{#block "content"}}
-<h1>Admin Register Page</h1>
-
+{{#block 'content'}}
+<h1>Register</h1>
+<form method="POST">
+  {{{adminForm}}}
+  <input/ type="submit" class="btn btn-primary mt-3" value="Register">
+</form>
 {{/block}}
-
 
 {{/extends}}

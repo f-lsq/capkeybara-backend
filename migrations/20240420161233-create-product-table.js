@@ -26,6 +26,7 @@ exports.up = function(db) {
     cost: {type: "decimal", precision: 10, scale: 2, unsigned: true, notNull: true},
     quantity: {type: "int", unsigned: true, notNull: true},
     quantity_sold: {type: "int", unsigned: true, notNull: true, defaultValue: 0},
+    image_url: {type: "string", length: 255},
     category_id: {type: "int", unsigned: true, notNull: true}
   });
 };

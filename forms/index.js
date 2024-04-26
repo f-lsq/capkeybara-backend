@@ -30,42 +30,118 @@ const bootstrapField = function (name, object) {
 const createProductForm = (categories) => {
   // Form definition
   return forms.create({
-    "name": fields.string({
+    name: fields.string({
       required: true,
       errorAfterField: true
     }),
-    "description": fields.string({
+    description: fields.string({
       required: false,
       errorAfterField: false
     }),
-    "price": fields.number({
+    price: fields.number({
       required: false,
       errorAfterField: false,
       validators: [validators.min(0)]
     }),
-    "cost": fields.number({
+    cost: fields.number({
       required: true,
       errorAfterField: true,
       validators: [validators.min(0)]
     }),
-    "quantity": fields.number({
+    quantity: fields.number({
       required: true,
       errorAfterField: true,
       validators: [validators.min(0), validators.integer()]
     }),
-    "category_id": fields.string({
+    category_id: fields.string({
       label: "Category",
       required: true,
       errorAfterField: true,
       widget: widgets.select(),
       choices: categories
     }),
+    image_url: fields.string({
+      widget: widgets.hidden() // shown as a hidden form field
+    })
   }) 
 }
 
-// To create Signup / Login form for 'Admins' 
+// To create Signup form for 'Admins' 
 const createAdminRegistrationForm = () => {
-  // Stopped at 4.15
+  return forms.create({
+    name: fields.string({
+      required: true, errorAfterField: true,
+    }),
+    username: fields.string({
+      required: true, errorAfterField: true,
+    }),
+    email: fields.email({
+      required: true, 
+      errorAfterField: true,
+      widget: widgets.email(),
+      validators: [validators.email()]
+    }),
+    password: fields.password({
+      required: true, 
+      errorAfterField: true,
+      widget: widgets.password()
+    }),
+    confirm_password: fields.password({
+      required: true, 
+      errorAfterField: true,
+      widget: widgets.password(),
+      validators: [validators.matchField('password'), validators.minlength(8)] // can have more than one validator
+    })
+  })
 }
 
-module.exports = { createProductForm, bootstrapField }; 
+// To create Login form
+const createLoginForm = () => {
+  return forms.create({
+    email: fields.email({
+      required: true, 
+      errorAfterField: true,
+      widget: widgets.email(),
+      validators: [validators.email()]
+    }),
+    password: fields.password({
+      required: true, 
+      errorAfterField: true,
+      widget: widgets.password()
+    })
+  })
+}
+
+const createSearchForm = (categories) => {
+  return forms.create({
+    'name': fields.string({
+      required: false, // search does not always need to be filled 
+      errorAfterField: true,
+    }),
+    "min_price": fields.number({
+      required: false,
+      errorAfterField: true,
+      widget: widgets.number(),
+    }),
+    "max_price": fields.number({
+      required: false,
+      errorAfterField: true,
+      widget: widgets.number(),
+    }),
+    "category_id": fields.string({
+      label: "Category",
+      required: false,
+      errorAfterField: true,
+      widget: widgets.select(),
+      choices: categories
+    })
+  })
+}
+
+module.exports = { 
+  createProductForm, 
+  bootstrapField,
+  createAdminRegistrationForm,
+  createLoginForm,
+  createSearchForm
+ }; 

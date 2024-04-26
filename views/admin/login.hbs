@@ -1,10 +1,12 @@
-{{#extends "base"}}
+{{#extends 'base'}}
 
-{{#block "title"}}Login{{/block}}
-{{#block "content"}}
-<h1>Admin Login Page</h1>
+{{#block 'content'}}
+<h1>Login</h1>
+<form method="POST">
+  {{{loginForm}}}
+  <input type="submit" class="btn btn-primary mt-3" value="Login"/>
+</form>
 
 {{/block}}
-
 
 {{/extends}}
