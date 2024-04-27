@@ -1,19 +1,9 @@
 {
   "dev": {
-    "driver": {
-      "ENV": "DB_DRIVER"
-    },
-    "user": {
-      "ENV": "DB_USER"
-    },
-    "password": {
-      "ENV": "DB_PASSWORD"
-    },
-    "database": {
-      "ENV": "DB_DATABASE"
-    },
-    "host": {
-      "ENV": "DB_HOST"
-    }
+    "driver": "mysql",
+    "user": "spirit",
+    "password": "im@gh0stZZZZ",
+    "database": "capkeybara",
+    "host": "127.0.0.1"
   }
 }

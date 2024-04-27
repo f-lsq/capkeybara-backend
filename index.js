@@ -57,7 +57,13 @@ app.use((req, res, next) => {
 })
 
 // Enable csurf for CSRF protection
-app.use(csurf());
+const csurfInstance = csurf();
+app.use((req, res, next) => {
+  if (req.url.slice(0,5) == "/api/") {
+    return next()
+  }
+  csurfInstance(req, res, next);
+})
 
 // Middleware to share CSRF token with all hbs files (must be after sessions)
 // - Token expires after 5-10 minutes
@@ -78,6 +84,12 @@ app.use((err, req, res, next) => {
   }
 })
 
+
+const api = {
+  products: require('./routes/api/products'),
+  buyers: require('./routes/api/buyers')
+}
+
 async function main() {
   // Routes 
 
@@ -91,7 +103,10 @@ async function main() {
   app.use("/products", productRoutes);
   app.use("/admin", adminRoutes);
   app.use('/cloudinary', cloudinaryRoutes);
-  
+
+  // Use api routers
+  app.use('/api/products', express.json(), api.products);
+  app.use('/api/buyers', express.json(), api.buyers);
 }
 
 main();

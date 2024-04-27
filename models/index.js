@@ -18,12 +18,16 @@ const Category = bookshelf.model('Category', {
   }
 })
 
-const User = bookshelf.model('User', {
-  tableName: 'users'
+const Buyer = bookshelf.model('Buyer', {
+  tableName: 'buyers'
 })
 
 const Admin = bookshelf.model('Admin', {
   tableName: 'admins'
 })
 
-module.exports = { Product, Category, User, Admin };
+const Seller = bookshelf.model('Seller', {
+  tableName: 'sellers'
+})
+
+module.exports = { Product, Category, Buyer, Admin, Seller };

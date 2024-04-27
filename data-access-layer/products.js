@@ -8,7 +8,6 @@ async function getAllProducts() {
   return products;
 }
 
-
 async function getAllCategories() {
   const allCategories = await Category.fetchAll().map(category => [category.get("id"), category.get("name")]);
   return allCategories;

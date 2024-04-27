@@ -1,3 +1,5 @@
+[Good practice for API naming](https://medium.com/@nadinCodeHat/rest-api-naming-conventions-and-best-practices-1c4e781eb6a5)
+
 Dependencies used (Added using yarn)
 * Express
 * HBS
@@ -14,3 +16,6 @@ CSRF
 
 Cloudinary
 * cloudinary: For image uploading
+
+JSON Web TOken
+* jsonwebtoken: For API Authentication
