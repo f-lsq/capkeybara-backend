@@ -16,6 +16,7 @@
     "bookshelf": "^1.2.0",
     "cloudinary": "^2.2.0",
     "connect-flash": "^0.1.1",
+    "cors": "^2.8.5",
     "csurf": "^1.11.0",
     "db-migrate": "^0.11.14",
     "db-migrate-mysql": "^2.3.2",

@@ -1,5 +1,7 @@
 // Dependencies
 const jwt = require('jsonwebtoken');
+const { generateAccessToken } = require('../utils');
+const tokenServiceLayer = require('../service-layer/tokens');
 
 // Middleware to check if the user has access to a page
 const checkIfAuthenticated = (req, res, next) => {
@@ -16,27 +18,56 @@ const checkIfAuthenticated = (req, res, next) => {
 
 // Middleware to check if a valid JWT has been provided
 const checkIfAuthenticatedJWT = (req, res, next) => {
-  const authHeader = req.header.authorizaiton;
+  const authHeader = req.headers.authorization;
 
   if (authHeader) {
     // extracts JWT (with no 'Bearer' infront)
     const token = authHeader.split(' ')[1];
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-      if (err) {
-        return res.sendStatus(403);
-      }
-
-      req.user = user;
-      next();
+    jwt.verify(token, process.env.TOKEN_SECRET, (error, payload) => {
+      if (error) {
+        return res.status(403).json('Invalid token');
+      } else {
+        req.payload = payload;
+        next();
+      }    
     })
   } else {
-    res.sendStatus(401);
-    res.json({
+    res.status(401).json({
       "error": "Login required to access this route"
     })
   }
 }
 
+// Middleware to send a refresh token if the access token expires
+const checkIfAuthenticatedRefreshJWT = async (req, res, next) => {
+  let { refreshToken } = req.body;
 
-module.exports = { checkIfAuthenticated, checkIfAuthenticatedJWT }
+  if (!refreshToken) {
+    return res.sendStatus(401);
+  }
+
+  const invalidRefreshToken = await tokenServiceLayer.isBlacklistedToken(refreshToken);
+  if (invalidRefreshToken) {
+    return res.status(401).json({
+      "message": "The refresh token has already expired"
+    })
+  }
+
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, payload) => {
+    if (error) {
+      return res.status(403).json('Invalid token')
+    } 
+      req.payload = {
+        ...payload,
+        refreshToken,
+      }
+      next();
+  })
+}
+
+
+module.exports = { 
+  checkIfAuthenticated, 
+  checkIfAuthenticatedJWT,
+  checkIfAuthenticatedRefreshJWT }

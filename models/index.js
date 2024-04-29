@@ -30,4 +30,14 @@ const Seller = bookshelf.model('Seller', {
   tableName: 'sellers'
 })
 
-module.exports = { Product, Category, Buyer, Admin, Seller };
+const BlacklistedToken = bookshelf.model('BlacklistedToken', {
+  tableName: 'blacklisted_tokens'
+})
+
+module.exports = { 
+  Product, 
+  Category, 
+  Buyer, 
+  Admin, 
+  Seller,
+  BlacklistedToken };

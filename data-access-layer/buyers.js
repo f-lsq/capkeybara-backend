@@ -25,7 +25,7 @@ async function getBuyerByEmail(buyerEmail){
     }).fetch({
       require: false
     })
-    
+
     return existingBuyer;
   } catch(e) {
     throw new Error(e);

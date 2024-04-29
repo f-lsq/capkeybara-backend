@@ -14,7 +14,6 @@ async function getAllBuyers(){
 async function createBuyer(buyerData){
   try {
     const existingBuyer = await buyerDataLayer.getBuyerByEmail(buyerData.email);
-    console.log(existingBuyer.toJSON());
     if (!existingBuyer) {
       const newBuyer = await buyerDataLayer.createBuyer(buyerData);
       return newBuyer;
@@ -28,21 +27,23 @@ async function createBuyer(buyerData){
   }
 }
 
+/**
+ * 
+ * @param {string} email 
+ * @param {string} password 
+ * @returns {object} buyer data, if buyer login credentials are valid
+ * 'undefined', if buyer login credentials are invalid 
+ */
 async function getBuyerByLoginCredentials(email, password){
   try {
     const existingBuyer = await buyerDataLayer.getBuyerByEmail(email);
-    
-    if (!existingBuyer) {
-      return {
-        "Error": "Invalid login credentials."
-      }
-    } else {
+    if (existingBuyer) {
       const hashedPassword = existingBuyer.toJSON().password
       const validPassword = await compareHashedPassword(password, hashedPassword);
       if (validPassword) {
         return existingBuyer.toJSON();
       }
-    }
+    } 
   } catch(e) {
     throw new Error(e);
   }

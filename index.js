@@ -2,12 +2,12 @@
 const express = require("express");
 const hbs = require("hbs");
 const wax = require("wax-on");
-require("dotenv").config();
 const session = require("express-session");
 const flash = require("connect-flash");
 const FileStore = require("session-file-store")(session); // Calls 'session-file-store' function and pass 'session' as parameter
 const csurf = require('csurf');
 require('dotenv').config();
+const cors = require('cors');
 
 // Set up express
 const app= express();
@@ -28,6 +28,9 @@ app.use(
     "extended": false
   })
 )
+
+// Enable CORS (before sessions)
+app.use(cors());
 
 // Enable sessions
 app.use(session({

@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const buyerServiceLayer = require('../../service-layer/buyers');
+const tokenServiceLayer = require('../../service-layer/tokens');
 const { getHashedPassword, generateAccessToken } = require('../../utils');
+const { checkIfAuthenticatedJWT, checkIfAuthenticatedRefreshJWT } = require('../../middlewares');
 
 // Gets all buyer information
 router.get('/', async (req, res) => {
@@ -37,24 +39,59 @@ router.post('/', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const buyerData = await buyerServiceLayer.getBuyerByLoginCredentials(email, password);
-    const accessToken = generateAccessToken(buyerData.id, buyerData.username, buyerData.email);
-    res.send({
-      "message": "Login successful.",
-      "token": accessToken
-    })
-  } catch {
-    res.status(400).json({
+    const buyerData = await buyerServiceLayer.getBuyerByLoginCredentials(email, password)
+    if (buyerData) {
+      const accessToken = generateAccessToken(buyerData, process.env.TOKEN_SECRET, '15m');
+      const refreshToken = generateAccessToken(buyerData, process.env.REFRESH_TOKEN_SECRET, '7d');
+      res.status(200).json({
+        "message": "Login successful.",
+        "id": buyerData.id,
+        "username": buyerData.username,
+        "email": buyerData.email,
+        "token": accessToken,
+        "refreshToken": refreshToken
+      })
+    } else {
+      res.status(401).json({
+        "response": "Invalid login credentials"
+      })
+    }
+  } catch(e) {
+    res.status(500).json({
       "error": e.message
     })
   }
 })
 
-router.post("/forgot-password", async (req, res) => {
+router.get("/profile", checkIfAuthenticatedJWT, async (req, res) => {
+  const payload = req.payload;
+  res.send(payload);
+})
 
+router.post("/forgot-password", async (req, res) => {
 })
 
 router.post("/update-password", async (req, res) => {
+})
+
+router.post('/refresh-token', checkIfAuthenticatedRefreshJWT, async (req, res) => {
+  const payload = req.payload;
+  let accessToken = generateAccessToken({
+    id: payload.id,
+    username: payload.username,
+    email: payload.email,
+  }, process.env.TOKEN_SECRET, '15m');
+  res.status(200).json({
+    accessToken
+  })
+})
+
+router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
+  const payload = req.payload;
+  await tokenServiceLayer.createBlacklistedToken(payload.refreshToken)
+  res.json({
+    "message": "Logged out successfully"
+  })
 
 })
 
