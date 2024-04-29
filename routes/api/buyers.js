@@ -15,21 +15,34 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { password, confirm_password, ...data } = req.body;
-    const buyerData = {
-      ...data,
-      password: await getHashedPassword(password)
-    }
-    const newBuyer = await buyerServiceLayer.createBuyer(buyerData);
-    if (newBuyer.error) {
-      res.status(400).json(newBuyer.error)
+    const existingBuyer = await buyerServiceLayer.getBuyerBySignupCredentials(data.username, data.email);
+    if (!existingBuyer) {
+      if (Object.values(data).every(v => v.length > 0) && Object.values(data).length > 2) { // Checks if there are empty string in data object
+        const buyerData = {
+          ...data,
+          password: await getHashedPassword(password)
+        }
+        const newBuyer = await buyerServiceLayer.createBuyer(buyerData);
+        if (newBuyer.error) {
+          res.status(400).json(newBuyer.error)
+        } else {
+          res.status(200).json({
+            "message": "New account created succesfully",
+            "data": newBuyer
+          })
+        }
+      } else {
+        res.status(200).json({
+          "message": "Moving to second signup page. Please provide more details for complete sign up."
+        })
+      }
+      
     } else {
-      res.status(200).json({
-        "message": "New account created succesfully",
-        "data": newBuyer
-      })
+      res.status(403).json(existingBuyer)
     }
-  } catch(e) {
-    res.status(400).json({
+    }
+     catch(e) {
+      res.status(400).json({
       "error": e.message
     })
   }

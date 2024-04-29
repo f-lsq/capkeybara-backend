@@ -18,6 +18,19 @@ async function createBuyer(buyerData){
   
 }
 
+async function getBuyerByUsername(buyerUsername) {
+  try {
+    const existingBuyer = await Buyer.where({
+      username: buyerUsername
+    }).fetch({
+      require: false
+    })
+    return existingBuyer;
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
 async function getBuyerByEmail(buyerEmail){
   try {
     const existingBuyer = await Buyer.where({
@@ -35,5 +48,6 @@ async function getBuyerByEmail(buyerEmail){
 module.exports = {
   getAllBuyers,
   createBuyer,
+  getBuyerByUsername,
   getBuyerByEmail
 }

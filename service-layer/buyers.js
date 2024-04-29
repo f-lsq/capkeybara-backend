@@ -27,6 +27,29 @@ async function createBuyer(buyerData){
   }
 }
 
+async function getBuyerBySignupCredentials(buyerUsername, buyerEmail) {
+  try {
+    const existingUsername = await buyerDataLayer.getBuyerByUsername(buyerUsername)
+    const existingEmail = await buyerDataLayer.getBuyerByEmail(buyerEmail)
+    if (existingUsername && existingEmail) {
+      return {
+        "error": "Username and Email are already taken"
+      }
+    } else if (existingUsername) {
+      return {
+        "error": "Username is already taken"
+      }
+    } else if (existingEmail) {
+      return {
+        "error": "Email is already taken"
+      }
+    }
+  } catch(e) {
+    throw new Error(e);
+  }
+
+}
+
 /**
  * 
  * @param {string} email 
@@ -52,5 +75,6 @@ async function getBuyerByLoginCredentials(email, password){
 module.exports = {
   getAllBuyers,
   createBuyer,
+  getBuyerBySignupCredentials,
   getBuyerByLoginCredentials
 }
