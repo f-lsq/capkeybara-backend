@@ -270,7 +270,7 @@ cliui@^6.0.0:
 
 cloudinary@^2.2.0:
   version "2.2.0"
-  resolved "https://registry.npmjs.org/cloudinary/-/cloudinary-2.2.0.tgz"
+  resolved "https://registry.yarnpkg.com/cloudinary/-/cloudinary-2.2.0.tgz#9736a7421b5552c43603950fa41d9997c869d0b5"
   integrity sha512-akbLTZcNegGSkl07Frnt9fyiK9KZ2zPS+a+j7uLrjNYxVhDpDdIBz9G6snPCYqgk+WLVMRPfXTObalLr5L6g0Q==
   dependencies:
     lodash "^4.17.21"

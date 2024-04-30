@@ -7,6 +7,7 @@ const flash = require("connect-flash");
 const FileStore = require("session-file-store")(session); // Calls 'session-file-store' function and pass 'session' as parameter
 const csurf = require("csurf");
 const cors = require("cors");
+const cookieparser = require("cookie-parser");
 
 // Configuring dotenv and set up express
 require("dotenv").config();
@@ -22,12 +23,15 @@ app.use(express.static("public"));
 wax.on(hbs.handlebars);
 wax.setLayoutPath("./views/layouts");
 
-// Enable form processing
+// Middleware to parse request body
 app.use(
   express.urlencoded({
     "extended": false
   })
 )
+
+// Middleware to parse cookies
+app.use(cookieparser());
 
 // Enable CORS (before sessions)
 app.use(cors());
@@ -91,7 +95,8 @@ app.use((err, req, res, next) => {
 const api = {
   products: require('./routes/api/products'),
   buyers: require('./routes/api/buyers'),
-  sellers: require('./routes/api/sellers')
+  sellers: require('./routes/api/sellers'),
+  cloudinary: require('./routes/api/cloudinary')
 }
 
 async function main() {
@@ -111,6 +116,7 @@ async function main() {
   app.use('/api/products', express.json(), api.products);
   app.use('/api/buyers', express.json(), api.buyers);
   app.use('/api/sellers', express.json(), api.sellers);
+  app.use('/api/cloudinary', express.json(), api.cloudinary);
 }
 
 main();

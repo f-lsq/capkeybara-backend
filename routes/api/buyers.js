@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const cookieparser = require("cookie-parser");
+
 
 const buyerServiceLayer = require('../../service-layer/buyers');
 const tokenServiceLayer = require('../../service-layer/tokens');
@@ -49,6 +49,21 @@ router.post('/', async (req, res) => {
   }
 })
 
+router.get("/profile", checkIfAuthenticatedJWT, async (req, res) => {
+  const payload = req.payload;
+  res.send(payload);
+})
+
+router.post("/forgot-password", async (req, res) => {
+})
+
+router.post("/update-password", async (req, res) => {
+})
+
+// ===================================================
+// ROUTES FOR AUTHENTICATION
+// ===================================================
+
 // Verify buyer during login
 router.post('/login', async (req, res) => {
   try {
@@ -57,13 +72,13 @@ router.post('/login', async (req, res) => {
     if (buyerData) {
       const accessToken = generateAccessToken(buyerData, process.env.TOKEN_SECRET, '15m');
       const refreshToken = generateAccessToken(buyerData, process.env.REFRESH_TOKEN_SECRET, '7d');
-      
-      res.cookie('jwt', refreshToken, {
-        httpOnly: true,
-        sameSite: 'None',
-        secure: true,
-        maxMage: 24 * 60 * 60 * 1000
-      })
+
+      // res.cookie('token', refreshToken, {
+      //   httpOnly: true,
+      //   sameSite: 'None', // 'None' for HTTPS
+      //   secure: true,
+      //   maxAge: 24 * 60 * 60 * 1000
+      // })
 
       return res.status(200).json({
         "message": "Login successful.",
@@ -85,17 +100,6 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.get("/profile", checkIfAuthenticatedJWT, async (req, res) => {
-  const payload = req.payload;
-  res.send(payload);
-})
-
-router.post("/forgot-password", async (req, res) => {
-})
-
-router.post("/update-password", async (req, res) => {
-})
-
 router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
   const payload = req.payload;
   let accessToken = generateAccessToken({
@@ -111,7 +115,7 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
 router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
   const payload = req.payload;
   await tokenServiceLayer.createBlacklistedToken(payload.refreshToken)
-  res.json({
+  res.status(204).json({
     "message": "Logged out successfully"
   })
 

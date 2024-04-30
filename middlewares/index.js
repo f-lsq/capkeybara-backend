@@ -1,6 +1,5 @@
 // Dependencies
 const jwt = require('jsonwebtoken');
-const { generateAccessToken } = require('../utils');
 const tokenServiceLayer = require('../service-layer/tokens');
 
 // Middleware to check if the user has access to a page
@@ -19,7 +18,7 @@ const checkIfAuthenticated = (req, res, next) => {
 // Middleware to check if a valid JWT has been provided
 const checkIfAuthenticatedJWT = (req, res, next) => {
   const authHeader = req.headers.authorization;
-
+  
   if (authHeader) {
     // extracts JWT (with no 'Bearer' infront)
     const token = authHeader.split(' ')[1];
@@ -44,13 +43,15 @@ const checkIfAuthenticatedRefreshJWT = async (req, res, next) => {
   let { refreshToken } = req.body;
 
   if (!refreshToken) {
-    return res.sendStatus(401);
+    return res.send(401).json({
+      "error": "No refresh token found"
+    });
   }
 
   const invalidRefreshToken = await tokenServiceLayer.isBlacklistedToken(refreshToken);
   if (invalidRefreshToken) {
-    return res.status(401).json({
-      "message": "The refresh token has already expired"
+    return res.status(403).json({
+      "error": "The refresh token has already expired"
     })
   }
 
