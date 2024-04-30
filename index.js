@@ -5,11 +5,11 @@ const wax = require("wax-on");
 const session = require("express-session");
 const flash = require("connect-flash");
 const FileStore = require("session-file-store")(session); // Calls 'session-file-store' function and pass 'session' as parameter
-const csurf = require('csurf');
-require('dotenv').config();
-const cors = require('cors');
+const csurf = require("csurf");
+const cors = require("cors");
 
-// Set up express
+// Configuring dotenv and set up express
+require("dotenv").config();
 const app= express();
 
 // Use hbs for view engine 
@@ -90,12 +90,12 @@ app.use((err, req, res, next) => {
 
 const api = {
   products: require('./routes/api/products'),
-  buyers: require('./routes/api/buyers')
+  buyers: require('./routes/api/buyers'),
+  sellers: require('./routes/api/sellers')
 }
 
 async function main() {
   // Routes 
-
   const landingRoutes = require("./routes/landing");
   const productRoutes = require("./routes/products");
   const adminRoutes = require("./routes/admin");
@@ -110,6 +110,7 @@ async function main() {
   // Use api routers
   app.use('/api/products', express.json(), api.products);
   app.use('/api/buyers', express.json(), api.buyers);
+  app.use('/api/sellers', express.json(), api.sellers);
 }
 
 main();

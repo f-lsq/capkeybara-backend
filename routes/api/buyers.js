@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const cookieparser = require("cookie-parser");
 
 const buyerServiceLayer = require('../../service-layer/buyers');
 const tokenServiceLayer = require('../../service-layer/tokens');
@@ -56,7 +57,15 @@ router.post('/login', async (req, res) => {
     if (buyerData) {
       const accessToken = generateAccessToken(buyerData, process.env.TOKEN_SECRET, '15m');
       const refreshToken = generateAccessToken(buyerData, process.env.REFRESH_TOKEN_SECRET, '7d');
-      res.status(200).json({
+      
+      res.cookie('jwt', refreshToken, {
+        httpOnly: true,
+        sameSite: 'None',
+        secure: true,
+        maxMage: 24 * 60 * 60 * 1000
+      })
+
+      return res.status(200).json({
         "message": "Login successful.",
         "id": buyerData.id,
         "username": buyerData.username,
@@ -87,7 +96,7 @@ router.post("/forgot-password", async (req, res) => {
 router.post("/update-password", async (req, res) => {
 })
 
-router.post('/refresh-token', checkIfAuthenticatedRefreshJWT, async (req, res) => {
+router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
   const payload = req.payload;
   let accessToken = generateAccessToken({
     id: payload.id,
