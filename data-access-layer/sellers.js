@@ -4,6 +4,20 @@ async function getAllSellers(){
   return await Seller.collection().fetch();
 }
 
+async function createSeller(sellerData){
+  try {
+    const newSeller = new Seller({
+      ...sellerData,
+      date_created: new Date()
+    })
+    await newSeller.save();
+    return newSeller;
+  } catch(e) {
+    throw new Error(e);
+  }
+  
+}
+
 async function getSellerByUsername(sellerUsername) {
   try {
     const existingSeller = await Seller.where({
@@ -33,6 +47,7 @@ async function getSellerByEmail(sellerEmail){
 
 module.exports = {
   getAllSellers,
+  createSeller,
   getSellerByUsername,
   getSellerByEmail
 }

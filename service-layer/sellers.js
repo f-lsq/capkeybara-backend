@@ -3,14 +3,34 @@ const { compareHashedPassword } = require('../utils');
 
 async function getAllSellers() {
   const allSellers = await sellerDataLayer.getAllSellers();
-  console.log("Service layer:", allSellers);
   return allSellers;
 }
 
-async function getSellerBySignupCredentials(buyerUsername, buyerEmail) {
+/**
+ * Checks if sign up information exists in the DB
+ * @param {Object} sellerData 
+ * @returns 
+ */
+async function createSeller(sellerData){
   try {
-    const existingUsername = await sellerDataLayer.getBuyerByUsername(buyerUsername)
-    const existingEmail = await sellerDataLayer.getBuyerByEmail(buyerEmail)
+    const existingSeller = await sellerDataLayer.getSellerByEmail(sellerData.email);
+    if (!existingSeller) {
+      const newSeller = await sellerDataLayer.createSeller(sellerData);
+      return newSeller;
+    } else {
+      return {
+        "error": "This email is already in use. Please try again."
+      }
+    }
+  } catch(e) {
+    throw new Error(e);
+  }
+}
+
+async function getSellerBySignupCredentials(sellerUsername, sellerEmail) {
+  try {
+    const existingUsername = await sellerDataLayer.getSellerByUsername(sellerUsername)
+    const existingEmail = await sellerDataLayer.getSellerByEmail(sellerEmail)
     if (existingUsername && existingEmail) {
       return {
         "error": "Username and Email are already taken"
@@ -55,6 +75,7 @@ async function getSellerByLoginCredentials(email, password){
 
 module.exports = {
   getAllSellers,
+  createSeller,
   getSellerBySignupCredentials,
   getSellerByLoginCredentials
 }
