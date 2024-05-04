@@ -9,21 +9,94 @@ async function getAllProducts() {
 }
 
 async function getAllCategories() {
-  const allCategories = await Category.fetchAll().map(category => [category.get("id"), category.get("name")]);
+  const allCategories = await Category.fetchAll();
   return allCategories;
 }
 
+async function getProductById(productId) {
+  try {
+    const existingProduct = await Product.where({
+      "id": productId
+    }).fetch({
+      require: false
+    })
+  
+    return existingProduct;
+  } catch(e) {
+    throw new Error(e);
+  }
+}
+
+async function getProductBySeller(sellerId) {
+  try {
+    const products = await Product.where({
+      "seller_id": sellerId
+    }).fetchAll({
+      require: false,
+      withRelated: ['category']
+    })
+  
+    return products;
+  } catch(e) {
+    throw new Error(e);
+  }
+}
+
+async function getProductByCategory(categoryId) {
+  try {
+    const products = await Product.where({
+      "category_id": categoryId
+    }).fetchAll({
+      require: false
+    })
+  
+    return products;
+  } catch(e) {
+    throw new Error(e);
+  }
+}
+
 async function createProduct(productData) {
-  // Creates an instance of the product model - represents ONE ROW in the products table
-  const product = new Product();
-  product.set(productData);
-  // Save the newly created product to the DB
-  await product.save();
-  return product;
+  try {
+    const newProduct = new Product({
+      ...productData,
+      date_created: new Date()
+    })
+    await newProduct.save();
+    return newProduct;
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
+async function updateProduct(existingProduct, newProductData) {
+  try {
+    existingProduct.set({
+      ...newProductData
+     })
+
+     await existingProduct.save();
+     return existingProduct;
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
+async function deleteProduct(existingProduct) {
+  try {
+    await existingProduct.destroy();
+  } catch (e) {
+    throw new Error(e);
+  }
 }
 
 module.exports = {
   getAllProducts,
   getAllCategories,
-  createProduct
+  getProductById,
+  getProductBySeller,
+  getProductByCategory,
+  createProduct,
+  updateProduct,
+  deleteProduct
 }

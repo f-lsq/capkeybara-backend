@@ -27,7 +27,22 @@ exports.up = function(db) {
     quantity_available: {type: "int", unsigned: true, notNull: true},
     quantity_sold: {type: "int", unsigned: true, notNull: true, defaultValue: 0},
     image_url: {type: "string", length: 255},
-    category_id: {type: "int", unsigned: true, notNull: true}
+    category_id: {type: "int", unsigned: true, notNull: true, foreignKey: {
+      name: "product_category_fk", table: "categories", mapping: "id",
+      rules: {
+        onDelete: "RESTRICT",
+        onUpdate: "RESTRICT"
+      }
+    }},
+    seller_id: {type: "int", unsigned: true, notNull: true, foreignKey: {
+      name: "product_seller_fk", table: "sellers", mapping: "id",
+      rules: {
+        onDelete: "RESTRICT",
+        onUpdate: "RESTRICT"
+      }
+    }},
+    date_created: {type: "datetime", notNull: true},
+    date_modified: {type: "datetime", notNull: false}
   });
 };
 
