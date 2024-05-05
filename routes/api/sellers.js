@@ -48,6 +48,28 @@ router.post('/', async (req, res) => {
   }
 })
 
+// Gets a seller by ID
+router.get('/:sellerId', async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+    const existingSeller = await sellerServiceLayer.getSellerById(sellerId);
+    if (existingSeller) {
+      res.status(200).json({
+        "success": `Seller of ID ${sellerId} found`,
+        existingSeller
+      });
+    } else {
+      res.status(400).json({
+        "error": `Seller of ID ${sellerId} not found`
+      })  
+    }  
+  } catch (e) {
+    res.status(400).json({
+      "error": e.message
+    })
+  }
+})
+
 router.get("/profile", checkIfAuthenticatedJWT, async (req, res) => {
   const payload = req.payload;
   res.send(payload);
@@ -83,7 +105,6 @@ router.post('/login', async (req, res) => {
         "message": "Login successful.",
         "id": sellerData.id,
         "username": sellerData.username,
-        "name": sellerData.name,
         "email": sellerData.email,
         "token": accessToken,
         "refreshToken": refreshToken

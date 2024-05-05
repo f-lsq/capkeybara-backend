@@ -27,6 +27,11 @@ async function createSeller(sellerData){
   }
 }
 
+async function getSellerById(sellerId) {
+  const existingSeller = await sellerDataLayer.getSellerById(sellerId);
+  return existingSeller;
+}
+
 async function getSellerBySignupCredentials(sellerUsername, sellerEmail) {
   try {
     const existingUsername = await sellerDataLayer.getSellerByUsername(sellerUsername)
@@ -76,6 +81,7 @@ async function getSellerByLoginCredentials(email, password){
 module.exports = {
   getAllSellers,
   createSeller,
+  getSellerById,
   getSellerBySignupCredentials,
   getSellerByLoginCredentials
 }

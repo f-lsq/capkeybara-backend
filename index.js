@@ -96,7 +96,8 @@ const api = {
   products: require('./routes/api/products'),
   buyers: require('./routes/api/buyers'),
   sellers: require('./routes/api/sellers'),
-  cloudinary: require('./routes/api/cloudinary')
+  cloudinary: require('./routes/api/cloudinary'),
+  cloudinary: require('./routes/api/cart')
 }
 
 async function main() {
@@ -105,18 +106,21 @@ async function main() {
   const productRoutes = require("./routes/products");
   const adminRoutes = require("./routes/admin");
   const cloudinaryRoutes = require("./routes/cloudinary");
+  const checkoutRoutes = require('./routes/checkout');
 
   // Use the landing routes
   app.use("/", landingRoutes);
   app.use("/products", productRoutes);
   app.use("/admin", adminRoutes);
   app.use('/cloudinary', cloudinaryRoutes);
+  app.use('/checkout', checkoutRoutes)
 
   // Use api routers
   app.use('/api/products', express.json(), api.products);
   app.use('/api/buyers', express.json(), api.buyers);
   app.use('/api/sellers', express.json(), api.sellers);
   app.use('/api/cloudinary', express.json(), api.cloudinary);
+  app.use('/api/cart', express.json(), api.cloudinary);
 }
 
 main();

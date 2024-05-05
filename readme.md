@@ -17,5 +17,8 @@ CSRF
 Cloudinary
 * cloudinary: For image uploading
 
-JSON Web TOken
+JSON Web Token
 * jsonwebtoken: For API Authentication
+
+Payment Processing
+* stripe: For Payment
