@@ -30,17 +30,6 @@ const createCartItem = async (buyerId, productId, quantity) => {
   return cartItem;
 }
 
-const removeCartItem = async (buyerId, productId) => {
-  const cartItem = await getCartItemByBuyerAndProduct(buyerId, productId);
-  if (cartItem) {
-    const removedCartItem = cartItem.toJSON();
-    await cartItem.destroy();
-    return removedCartItem;
-  } else {
-    return cartItem // null
-  }
-}
-
 const updateCartItemQuantity = async (buyerId, productId, newQuantity) => {
   const cartItem = await getCartItemByBuyerAndProduct(buyerId, productId);
   if (cartItem) {
@@ -52,11 +41,24 @@ const updateCartItemQuantity = async (buyerId, productId, newQuantity) => {
   }
 }
 
+const removeCartItem = async (buyerId, productId) => {
+  const cartItem = await getCartItemByBuyerAndProduct(buyerId, productId);
+  if (cartItem) {
+    const removedCartItem = cartItem.toJSON();
+    await cartItem.destroy();
+    return removedCartItem;
+  } else {
+    return cartItem // null
+  }
+}
+
+
+
 module.exports = {
   getCartItem,
   getCartItemByBuyerAndProduct,
   createCartItem,
-  removeCartItem,
-  updateCartItemQuantity
+  updateCartItemQuantity,
+  removeCartItem
 }
 

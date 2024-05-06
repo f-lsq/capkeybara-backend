@@ -1,5 +1,17 @@
 const cartDataLayer = require('../data-access-layer/cart_items');
 
+async function getCartItem(buyerId) {
+  try {
+    const cartItems = await cartDataLayer.getCartItem(buyerId);
+
+    // Could add some recommendation business logic based on shopping cart item
+  
+    return cartItems;
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
 // Increment of 1
 async function addToCart(buyerId, productId, quantity) {
   try {
@@ -32,13 +44,10 @@ async function removeFromCart(buyerId, productId) {
   }
 }
 
-async function getCartItem(buyerId) {
+async function updateCartItemQuantity(buyerId, productId, newQuantity) {
   try {
-    const cartItems = await cartDataLayer.getCartItem(buyerId);
-
-    // Could add some recommendation business logic based on shopping cart item
-  
-    return cartItems;
+    const updatedCartItem = await cartDataLayer.updateCartItemQuantity(buyerId, productId, newQuantity);
+    return updatedCartItem;
   } catch (e) {
     throw new Error(e);
   }
@@ -53,19 +62,12 @@ async function removeCartItem(buyerId, productId) {
   }
 }
 
-async function updateCartItemQuantity(buyerId, productId, newQuantity) {
-  try {
-    const updatedCartItem = await cartDataLayer.updateCartItemQuantity(buyerId, productId, newQuantity);
-    return updatedCartItem;
-  } catch (e) {
-    throw new Error(e);
-  }
-}
+
 
 module.exports = {
+  getCartItem,
   addToCart,
   removeFromCart,
-  getCartItem,
-  removeCartItem,
-  updateCartItemQuantity
+  updateCartItemQuantity,
+  removeCartItem
 };

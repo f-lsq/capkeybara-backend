@@ -52,7 +52,7 @@ router.post('/:buyerId', async (req, res) => {
 })
 
 // Reduce cart item quantity by 1
-router.post('/:buyerId/remove', async (req, res) => {
+router.post('/remove/:buyerId', async (req, res) => {
   try {
     const { buyerId } = req.params;
     const productId = req.body.product_id;

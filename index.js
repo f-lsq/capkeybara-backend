@@ -37,12 +37,12 @@ app.use(cookieparser());
 app.use(cors());
 
 // Enable sessions
-app.use(session({
-  store: new FileStore(), // store session data in files
-  secret: process.env.SESSION_SECRET_KEY, // secret key
-  resave: false,
-  saveUninitialized: true // if a browser connects to the server without a session, create a new one immediately
-}))
+// app.use(session({
+//   store: new FileStore(), // store session data in files
+//   secret: process.env.SESSION_SECRET_KEY, // secret key
+//   resave: false,
+//   saveUninitialized: true // if a browser connects to the server without a session, create a new one immediately
+// }))
 
 // Enable flash messages (must be after sessions)
 app.use(flash());
@@ -97,7 +97,8 @@ const api = {
   buyers: require('./routes/api/buyers'),
   sellers: require('./routes/api/sellers'),
   cloudinary: require('./routes/api/cloudinary'),
-  cloudinary: require('./routes/api/cart')
+  cart: require('./routes/api/cart'),
+  checkout: require('./routes/api/checkout')
 }
 
 async function main() {
@@ -120,7 +121,8 @@ async function main() {
   app.use('/api/buyers', express.json(), api.buyers);
   app.use('/api/sellers', express.json(), api.sellers);
   app.use('/api/cloudinary', express.json(), api.cloudinary);
-  app.use('/api/cart', express.json(), api.cloudinary);
+  app.use('/api/cart', express.json(), api.cart);
+  app.use('/api/checkout', express.json(), api.checkout);
 }
 
 main();
