@@ -20,11 +20,12 @@ const compareHashedPassword = async (plainPassword, hashedPassword) => {
  * @param {*} expiresIn 
  * @returns 
  */
-const generateAccessToken = (data, secret, expiresIn) => {
+const generateAccessToken = (data, secret, expiresIn, role) => {
   return jwt.sign({
     'id': data.id,
     'username': data.username,
-    'email': data.email
+    'email': data.email,
+    'role': role
   }, secret, {
     expiresIn
   })

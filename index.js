@@ -5,7 +5,7 @@ const wax = require("wax-on");
 const session = require("express-session");
 const flash = require("connect-flash");
 const FileStore = require("session-file-store")(session); // Calls 'session-file-store' function and pass 'session' as parameter
-const csurf = require("csurf");
+const csrf = require("csurf");
 const cors = require("cors");
 const cookieparser = require("cookie-parser");
 
@@ -34,7 +34,10 @@ app.use(
 app.use(cookieparser());
 
 // Enable CORS (before sessions)
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
 
 // Enable sessions
 // app.use(session({
@@ -64,12 +67,13 @@ app.use((req, res, next) => {
 })
 
 // Enable csurf for CSRF protection
-const csurfInstance = csurf();
+const csrfInstance = csrf();
 app.use((req, res, next) => {
+  // Disable CSRF for Stripe Webhook or API
   if (req.url.slice(0,5) == "/api/") {
     return next()
   }
-  csurfInstance(req, res, next);
+  csrfInstance(req, res, next);
 })
 
 // Middleware to share CSRF token with all hbs files (must be after sessions)

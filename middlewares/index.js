@@ -17,13 +17,16 @@ const checkIfAuthenticated = (req, res, next) => {
 
 // Middleware to check if a valid JWT has been provided
 const checkIfAuthenticatedJWT = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const accessToken = req.cookies.accessToken;
   
-  if (authHeader) {
+  // const authHeader = req.headers.authorization;
+  // console.log(authHeader);
+  
+  if (accessToken) {
     // extracts JWT (with no 'Bearer' infront)
-    const token = authHeader.split(' ')[1];
+    // const token = authHeader.split(' ')[1];
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (error, payload) => {
+    jwt.verify(accessToken, process.env.TOKEN_SECRET, (error, payload) => {
       if (error) {
         return res.status(403).json('Invalid token');
       } else {
@@ -40,7 +43,9 @@ const checkIfAuthenticatedJWT = (req, res, next) => {
 
 // Middleware to send a refresh token if the access token expires
 const checkIfAuthenticatedRefreshJWT = async (req, res, next) => {
-  let { refreshToken } = req.body;
+  // let { refreshToken } = req.body;
+
+  const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
     return res.send(401).json({

@@ -49,9 +49,12 @@ router.post('/', async (req, res) => {
   }
 })
 
+// Get information of a particular buyer
 router.get("/profile", checkIfAuthenticatedJWT, async (req, res) => {
   const payload = req.payload;
-  res.send(payload);
+  res.status(200).json({
+    payload
+  });
 })
 
 router.post("/forgot-password", async (req, res) => {
@@ -70,28 +73,29 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const buyerData = await buyerServiceLayer.getBuyerByLoginCredentials(email, password)
     if (buyerData) {
-      const accessToken = generateAccessToken(buyerData, process.env.TOKEN_SECRET, '15m');
-      const refreshToken = generateAccessToken(buyerData, process.env.REFRESH_TOKEN_SECRET, '7d');
+      const accessToken = generateAccessToken(buyerData, process.env.TOKEN_SECRET, '10s', 'buyer');
+      const refreshToken = generateAccessToken(buyerData, process.env.REFRESH_TOKEN_SECRET, '1m', 'buyer');
 
-      // res.cookie('token', refreshToken, {
-      //   httpOnly: true,
-      //   sameSite: 'None', // 'None' for HTTPS
-      //   secure: true,
-      //   maxAge: 24 * 60 * 60 * 1000
-      // })
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        sameSite: 'strict', // 'None' for HTTPS
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000
+      })
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        sameSite: 'strict', // 'None' for HTTPS
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000
+      })
 
       return res.status(200).json({
-        "message": "Login successful.",
-        "id": buyerData.id,
-        "username": buyerData.username,
-        "first_name": buyerData.first_name,
-        "email": buyerData.email,
-        "token": accessToken,
-        "refreshToken": refreshToken
+        "success": "Login successful"
       })
     } else {
       res.status(401).json({
-        "response": "Invalid login credentials"
+        "error": "Invalid login credentials"
       })
     }
   } catch(e) {
@@ -108,6 +112,14 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
     username: payload.username,
     email: payload.email,
   }, process.env.TOKEN_SECRET, '15m');
+
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    sameSite: 'strict', // 'None' for HTTPS
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000
+  })
+
   res.status(200).json({
     accessToken
   })
@@ -115,6 +127,7 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
 
 router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
   const payload = req.payload;
+  res.clearCookie;
   await tokenServiceLayer.createBlacklistedToken(payload.refreshToken)
   res.status(204).json({
     "message": "Logged out successfully"
