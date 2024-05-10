@@ -23,6 +23,7 @@ const compareHashedPassword = async (plainPassword, hashedPassword) => {
 const generateAccessToken = (data, secret, expiresIn, role) => {
   return jwt.sign({
     'id': data.id,
+    'first_name': data.first_name,
     'username': data.username,
     'email': data.email,
     'role': role

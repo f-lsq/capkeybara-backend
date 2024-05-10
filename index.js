@@ -39,7 +39,7 @@ app.use(cors({
   credentials: true
 }));
 
-// Enable sessions
+// // Enable sessions
 // app.use(session({
 //   store: new FileStore(), // store session data in files
 //   secret: process.env.SESSION_SECRET_KEY, // secret key

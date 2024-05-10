@@ -71,10 +71,10 @@ router.post("/update-password", async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const buyerData = await buyerServiceLayer.getBuyerByLoginCredentials(email, password)
+    const buyerData = await buyerServiceLayer.getBuyerByLoginCredentials(email, password);
     if (buyerData) {
       const accessToken = generateAccessToken(buyerData, process.env.TOKEN_SECRET, '10s', 'buyer');
-      const refreshToken = generateAccessToken(buyerData, process.env.REFRESH_TOKEN_SECRET, '1m', 'buyer');
+      const refreshToken = generateAccessToken(buyerData, process.env.REFRESH_TOKEN_SECRET, '7d', 'buyer');
 
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
@@ -107,11 +107,13 @@ router.post('/login', async (req, res) => {
 
 router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
   const payload = req.payload;
+
   let accessToken = generateAccessToken({
     id: payload.id,
+    first_name: payload.first_name,
     username: payload.username,
     email: payload.email,
-  }, process.env.TOKEN_SECRET, '15m');
+  }, process.env.TOKEN_SECRET, '10s');
 
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
