@@ -37,24 +37,56 @@ router.post('/', async (req, res) => {
           "message": "Moving to second signup page. Please provide more details for complete sign up."
         })
       }
-      
+
     } else {
-      res.status(403).json(existingBuyer)
+      res.status(403).json({
+        "error": "Buyer already exist",
+        existingBuyer
+      })
     }
-    }
-     catch(e) {
-      res.status(400).json({
+  }
+  catch (e) {
+    res.status(400).json({
       "error": e.message
     })
   }
 })
 
-// Get information of a particular buyer
-router.get("/profile", checkIfAuthenticatedJWT, async (req, res) => {
-  const payload = req.payload;
+// Gets a buyer by ID
+router.get('/:buyerId', async (req, res) => {
+  try {
+    const { buyerId } = req.params;
+    const existingBuyer = await buyerServiceLayer.getBuyerById(buyerId);
+    if (existingBuyer) {
+      res.status(200).json({
+        "success": `Buyer of ID ${buyerId} found`,
+        existingBuyer
+      });
+    } else {
+      res.status(400).json({
+        "error": `Buyer of ID ${buyerId} not found`
+      })  
+    }  
+  } catch (e) {
+    res.status(400).json({
+      "error": e.message
+    })
+  }
+})
+
+// Get a buyer's information by decoding JWT
+router.post("/profile", checkIfAuthenticatedJWT, async (req, res) => {
+  try {
+    const payload = req.payload;
   res.status(200).json({
     payload
   });
+  } catch (e) {
+    res.status(400).json({
+      "error": e.message
+    })
+  }
+  
 })
 
 router.post("/forgot-password", async (req, res) => {
@@ -73,7 +105,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const buyerData = await buyerServiceLayer.getBuyerByLoginCredentials(email, password);
     if (buyerData) {
-      const accessToken = generateAccessToken(buyerData, process.env.TOKEN_SECRET, '10s', 'buyer');
+      const accessToken = generateAccessToken(buyerData, process.env.TOKEN_SECRET, '15m', 'buyer');
       const refreshToken = generateAccessToken(buyerData, process.env.REFRESH_TOKEN_SECRET, '7d', 'buyer');
 
       res.cookie('accessToken', accessToken, {
@@ -98,7 +130,7 @@ router.post('/login', async (req, res) => {
         "error": "Invalid login credentials"
       })
     }
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({
       "error": e.message
     })
@@ -113,7 +145,7 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
     first_name: payload.first_name,
     username: payload.username,
     email: payload.email,
-  }, process.env.TOKEN_SECRET, '10s');
+  }, process.env.TOKEN_SECRET, '15m');
 
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
@@ -129,7 +161,22 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
 
 router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
   const payload = req.payload;
-  res.clearCookie;
+
+  // Replacing old cookies with one that expires immediately
+  res.cookie("accessToken", "", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+    expires: new Date(1)
+  });
+
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+    expires: new Date(1)
+  });
+
   await tokenServiceLayer.createBlacklistedToken(payload.refreshToken)
   res.status(204).json({
     "message": "Logged out successfully"

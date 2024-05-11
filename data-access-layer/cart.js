@@ -1,5 +1,4 @@
-
-const { CartItem} = require('../models'); 
+const { CartItem } = require('../models'); 
 
 const getCartItem = async (buyerId) => {
   return await CartItem.collection().where({

@@ -42,7 +42,7 @@ exports.up = function(db) {
       }
     }},
     date_created: {type: "datetime", notNull: true},
-    date_modified: {type: "datetime", notNull: false}
+    date_modified: {type: "datetime"}
   });
 };
 

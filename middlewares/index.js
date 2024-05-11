@@ -28,7 +28,9 @@ const checkIfAuthenticatedJWT = (req, res, next) => {
 
     jwt.verify(accessToken, process.env.TOKEN_SECRET, (error, payload) => {
       if (error) {
-        return res.status(403).json('Invalid token');
+        return res.status(403).json({
+            'message': 'Invalid token'
+        });
       } else {
         req.payload = payload;
         next();

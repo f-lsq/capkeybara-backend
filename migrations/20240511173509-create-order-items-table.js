@@ -15,31 +15,30 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.createTable('cart_items', {
+  return db.createTable('order_items', {
     id: { type: "int", primaryKey: true, unsigned: true, autoIncrement: true },
-    product_id: {type: "int", unsigned: true, notNull: true,
-                foreignKey: {name: 'cart_items_products_fk',
-                              table: 'products', 
+    order_id: {type: "int", unsigned: true, notNull: true,
+                foreignKey: {name: 'order_items_orders_fk',
+                              table: 'orders', 
                               mapping: 'id',
                               rules: {
-                                onDelete: "RESTRICT", // could send email to buyers for deleted product (maybe because vendor deleted the product)
+                                onDelete: "RESTRICT",
                                 onUpdate: "RESTRICT"
                               }}},
-    buyer_id: {type: "int", unsigned: true, notNull: true,
-                foreignKey: {name: 'cart_items_buyers_fk',
-                              table: 'buyers', 
+    product_id: {type: "int", unsigned: true, notNull: true,
+                foreignKey: {name: 'order_items_products_fk',
+                              table: 'products', 
                               mapping: 'id',
                               rules: {
                                 onDelete: "RESTRICT",
                                 onUpdate: "RESTRICT"
                               }}},
     quantity: {type: "int", unsigned: true}
-  }
-);
+  });
 };
 
 exports.down = function(db) {
-  return db.dropTable('cart_items');
+  return db.dropTable('order_items');
 };
 
 exports._meta = {

@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Cart service layer
 const cartServiceLayer = require('../../service-layer/cart');
-const { checkIfAuthenticated } = require('../../middlewares');
+const { checkIfAuthenticatedJWT } = require('../../middlewares');
 const Stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 router.get('/:userId', async function(req, res) {
@@ -21,7 +21,7 @@ router.get('/:userId', async function(req, res) {
         price_data: {
           currency: 'SGD',
           // set the price of 1 item (in cent)
-          unit_amount: i.related('product').get('price').toFixed(2)*100,
+          unit_amount: (i.related('product').get('price') * 100).toFixed(0),
           // to store data of the product
           product_data: {
             name: i.related('product').get('name'),

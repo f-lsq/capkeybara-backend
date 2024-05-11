@@ -15,7 +15,19 @@ async function createBuyer(buyerData){
   } catch(e) {
     throw new Error(e);
   }
-  
+}
+
+async function getBuyerById(buyerId) {
+  try {
+    const existingBuyer = await Buyer.where({
+      id: buyerId
+    }).fetch({
+      require: false
+    })
+    return existingBuyer;
+  } catch (e) {
+    throw new Error(e)
+  }
 }
 
 async function getBuyerByUsername(buyerUsername) {
@@ -48,6 +60,7 @@ async function getBuyerByEmail(buyerEmail){
 module.exports = {
   getAllBuyers,
   createBuyer,
+  getBuyerById,
   getBuyerByUsername,
   getBuyerByEmail
 }

@@ -22,8 +22,9 @@ exports.up = function(db) {
     password: {type: "string", length: 80, notNull: true},
     first_name: {type: "string", length: 255, notNull: true},
     last_name: {type: "string", length: 255, notNull: true},
-    address: {type: "string", length: 255, notNull: true},
+    address: {type: "text", notNull: true},
     contact: {type: "string", length: 20, notNull: true},
+    image_url: {type: "string", length: 255},
     verified: {type: "boolean", notNull: true, defaultValue: false},
     date_created: {type: "datetime", notNull: true},
   });

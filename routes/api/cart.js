@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const cartServiceLayer = require('../../service-layer/cart');
-// need checkIfAuthenticated
-const { checkIfAuthenticated } = require('../../middlewares');
+const { checkIfAuthenticatedJWT } = require('../../middlewares');
 
 // Gets all the cart items of a buyer
 router.get('/:buyerId', async (req, res) => {
@@ -29,7 +28,7 @@ router.get('/:buyerId', async (req, res) => {
 
 // Creates a new cart item, or
 // Increate cart item quantity by 1
-router.post('/:buyerId', async (req, res) => {
+router.post('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { buyerId } = req.params;
     const  productId = req.body.product_id;
@@ -52,7 +51,7 @@ router.post('/:buyerId', async (req, res) => {
 })
 
 // Reduce cart item quantity by 1
-router.post('/remove/:buyerId', async (req, res) => {
+router.post('/remove/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { buyerId } = req.params;
     const productId = req.body.product_id;
@@ -75,7 +74,7 @@ router.post('/remove/:buyerId', async (req, res) => {
 })
 
 // Update quantity of a cart item (ambiguous)
-router.put('/:buyerId', async (req, res) => {
+router.put('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { buyerId } = req.params;
     const  { ...data } = req.body;
@@ -98,7 +97,7 @@ router.put('/:buyerId', async (req, res) => {
 })
 
 // Remove a cart item entirely
-router.delete('/:buyerId', async (req, res) => {
+router.delete('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { buyerId } = req.params;
     const  productId = req.body.product_id;
