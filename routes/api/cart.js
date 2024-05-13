@@ -5,7 +5,7 @@ const cartServiceLayer = require('../../service-layer/cart');
 const { checkIfAuthenticatedJWT } = require('../../middlewares');
 
 // Gets all the cart items of a buyer
-router.get('/:buyerId', async (req, res) => {
+router.get('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { buyerId } = req.params;
     const cartItems = await cartServiceLayer.getCartItem(buyerId);
@@ -40,7 +40,7 @@ router.post('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
       })
     } else {
       res.status(400).json({
-        "error": `Cart items of ID ${productId} was not added for buyer ID ${buyerId}`
+        "error": `Quantity to be added exceeded quantity available for product of ID ${productId}`
       })
     }
   } catch (e) {
@@ -63,7 +63,7 @@ router.post('/remove/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
       })
     } else {
       res.status(400).json({
-        "error": `Cart item of ID ${productId} was not removed by 1 for buyer ID ${buyerId}`
+        "error": `Cart item of ID ${productId} either do not exist or cannot have negative quantity`
       })
     }
   } catch (e) {
@@ -86,7 +86,7 @@ router.put('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
       })
     } else {
       res.status(400).json({
-        "error": `Cart items of ID ${data.product_id} was not updated for buyer ID ${buyerId}`
+        "error": `Quantity to be added exceeded quantity available for product of ID ${data.product_id}`
       })
     }
   } catch (e) {

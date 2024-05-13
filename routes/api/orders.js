@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const cartServiceLayer = require('../../service-layer/cart');
+const productServiceLayer = require('../../service-layer/products');
 const orderServiceLayer = require('../../service-layer/orders');
 const { checkIfAuthenticatedJWT } = require('../../middlewares');
 
@@ -41,29 +42,31 @@ router.post('/:buyerId', async (req, res) => {
     })
     newOrder = newOrder.toJSON();
 
-    // Create all the order items using cart items
+    // Create all the order items using cart items, 
+    // while also updating quantity avaialble and sold for the products
     let cartItems = await cartServiceLayer.getCartItem(buyerId);
     cartItems = cartItems.toJSON();
+    console.log(cartItems);
     cartItems.forEach(async (cartItem) => {
       await orderServiceLayer.createOrderItem(
         newOrder.id, 
         cartItem.product_id,
         cartItem.quantity
       )
+      const responseProduct = await productServiceLayer.getProductById(cartItem.product_id);
+      await productServiceLayer.updateProduct(cartItem.product_id, {
+        quantity_available: responseProduct.quantity_available - cartItem.quantity,
+        quantity_sold: responseProduct.quantity_sold + cartItem.quantity
+      })
     })
 
     // Clear cart after order is created
     cartItems = await cartServiceLayer.clearCartItems(buyerId);
-    if (cartItems.length === 0) {
-      res.status(200).json({
-        "success": `New order created for buyer ID ${buyerId}`,
-        newOrder
-      })
-    } else {
-      res.status(400).json({
-        "error": `New order was not created for buyer ID ${buyerId}`
-      })
-    }
+
+    res.status(200).json({
+      "success": `New order created for buyer ID ${buyerId}`,
+      newOrder
+    })
   } catch (e) {
     res.status(500).json({
       "error": e.message

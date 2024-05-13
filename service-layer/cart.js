@@ -1,4 +1,5 @@
 const cartDataLayer = require('../data-access-layer/cart');
+const productDataLayer = require('../data-access-layer/products');
 
 async function getCartItem(buyerId) {
   try {
@@ -16,10 +17,27 @@ async function getCartItem(buyerId) {
 async function addToCart(buyerId, productId, quantity) {
   try {
     const cartItem = await cartDataLayer.getCartItemByBuyerAndProduct(buyerId, productId);
+    const product = await productDataLayer.getProductById(productId);
+    
+    const quantity_in_cart = cartItem.get('quantity');
+    const quantity_available = product.get('quantity_available');
+    
     if (cartItem) {
-      return await cartDataLayer.updateCartItemQuantity(buyerId, productId, cartItem.get('quantity')+1)
+      // If product is already in cart, check if the quantity to be added exceed what is avaiable in the product database
+      if (quantity_in_cart < quantity_available) {
+        return await cartDataLayer.updateCartItemQuantity(buyerId, productId, quantity_in_cart+1)
+      }
+      else {
+        return null;
+      }
     } else {
-      return await cartDataLayer.createCartItem(buyerId, productId, quantity);
+      // If product is not in the cart, check if quantity to be added is less than or equal to what is avaiable in the database
+      if (quantity <= quantity_available) {
+        return await cartDataLayer.createCartItem(buyerId, productId, quantity);
+      }
+      else {
+        return null;
+      }
     }
   } catch {
     throw new Error(e);
@@ -37,7 +55,7 @@ async function removeFromCart(buyerId, productId) {
         return null;
       }
     } else {
-      return cartItem // null
+      return null;
     }
   } catch (e) {
     throw new Error(e);
@@ -46,8 +64,13 @@ async function removeFromCart(buyerId, productId) {
 
 async function updateCartItemQuantity(buyerId, productId, newQuantity) {
   try {
-    const updatedCartItem = await cartDataLayer.updateCartItemQuantity(buyerId, productId, newQuantity);
-    return updatedCartItem;
+    const product = await productDataLayer.getProductById(productId);
+    if (newQuantity <= product.get('quantity_available')) {
+      const updatedCartItem = await cartDataLayer.updateCartItemQuantity(buyerId, productId, newQuantity);
+      return updatedCartItem;
+    } else {
+      return null;
+    }
   } catch (e) {
     throw new Error(e);
   }
