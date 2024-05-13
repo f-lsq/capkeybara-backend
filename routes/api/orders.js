@@ -33,11 +33,14 @@ router.post('/:buyerId', async (req, res) => {
   try {
     const { buyerId } = req.params;
     // Create a new order first (to get order id)
-    const total = await cartServiceLayer.getCartTotalPrice(buyerId);
+    const subtotalQty = await cartServiceLayer.getCartSubtotalAndQuantity(buyerId);
+    console.log(subtotalQty);
     let newOrder = await orderServiceLayer.createOrder({
       buyer_id: buyerId,
-      total,
-      order_status: "Preparing for Shipment",
+      subtotal: subtotalQty[0],
+      total_quantity: subtotalQty[1],
+      shipping_cost: 2,
+      order_status: "Payment Made",
       date_created: new Date(),
     })
     newOrder = newOrder.toJSON();
@@ -46,7 +49,6 @@ router.post('/:buyerId', async (req, res) => {
     // while also updating quantity avaialble and sold for the products
     let cartItems = await cartServiceLayer.getCartItem(buyerId);
     cartItems = cartItems.toJSON();
-    console.log(cartItems);
     cartItems.forEach(async (cartItem) => {
       await orderServiceLayer.createOrderItem(
         newOrder.id, 

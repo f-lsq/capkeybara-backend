@@ -36,13 +36,16 @@ router.post('/', async (req, res) => {
           "message": "Moving to second signup page. Please provide more details for complete sign up."
         })
       }
-      
+
     } else {
-      res.status(403).json(existingSeller)
+      res.status(403).json({
+        "error": "Seller already exist",
+        existingSeller
+      })
     }
-    }
-     catch(e) {
-      res.status(400).json({
+  }
+  catch (e) {
+    res.status(400).json({
       "error": e.message
     })
   }
@@ -61,8 +64,8 @@ router.get('/:sellerId', async (req, res) => {
     } else {
       res.status(400).json({
         "error": `Seller of ID ${sellerId} not found`
-      })  
-    }  
+      })
+    }
   } catch (e) {
     res.status(400).json({
       "error": e.message
@@ -70,9 +73,19 @@ router.get('/:sellerId', async (req, res) => {
   }
 })
 
+// Get a seller's information by decoding JWT
 router.get("/profile", checkIfAuthenticatedJWT, async (req, res) => {
-  const payload = req.payload;
-  res.send(payload);
+  try {
+    const payload = req.payload;
+    res.status(200).json({
+      payload
+    });
+  } catch {
+    res.status(400).json({
+      "error": e.message
+    })
+  }
+  
 })
 
 router.post("/forgot-password", async (req, res) => {
@@ -94,27 +107,29 @@ router.post('/login', async (req, res) => {
       const accessToken = generateAccessToken(sellerData, process.env.TOKEN_SECRET, '15m');
       const refreshToken = generateAccessToken(sellerData, process.env.REFRESH_TOKEN_SECRET, '7d');
 
-      // res.cookie('token', refreshToken, {
-      //   httpOnly: true,
-      //   sameSite: 'None', // 'None' for HTTPS
-      //   secure: true,
-      //   maxAge: 24 * 60 * 60 * 1000
-      // })
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        sameSite: 'strict', // 'None' for HTTPS
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000
+      })
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        sameSite: 'strict', // 'None' for HTTPS
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000
+      })
 
       return res.status(200).json({
-        "message": "Login successful.",
-        "id": sellerData.id,
-        "username": sellerData.username,
-        "email": sellerData.email,
-        "token": accessToken,
-        "refreshToken": refreshToken
+        "message": "Login successful."
       })
     } else {
       res.status(401).json({
         "error": "Invalid login credentials"
       })
     }
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({
       "error": e.message
     })
@@ -123,11 +138,21 @@ router.post('/login', async (req, res) => {
 
 router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
   const payload = req.payload;
+
   let accessToken = generateAccessToken({
     id: payload.id,
+    name: payload.name,
     username: payload.username,
     email: payload.email,
   }, process.env.TOKEN_SECRET, '15m');
+  
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    sameSite: 'strict', // 'None' for HTTPS
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000
+  })
+  
   res.status(200).json({
     accessToken
   })
@@ -135,7 +160,24 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
 
 router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
   const payload = req.payload;
-  await tokenServiceLayer.createBlacklistedToken(payload.refreshToken)
+
+  // Replacing old cookies with one that expires immediately
+  res.cookie("accessToken", "", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+    expires: new Date(1)
+  });
+
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+    expires: new Date(1)
+  });
+
+  // Replacing old cookies with one that expires immediately
+  await tokenServiceLayer.createBlacklistedToken(payload.refreshToken);
   res.status(204).json({
     "message": "Logged out successfully"
   })

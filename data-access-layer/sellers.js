@@ -15,7 +15,6 @@ async function createSeller(sellerData){
   } catch(e) {
     throw new Error(e);
   }
-  
 }
 
 async function getSellerById(sellerId) {

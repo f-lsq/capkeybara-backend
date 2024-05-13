@@ -18,12 +18,11 @@ async function addToCart(buyerId, productId, quantity) {
   try {
     const cartItem = await cartDataLayer.getCartItemByBuyerAndProduct(buyerId, productId);
     const product = await productDataLayer.getProductById(productId);
-    
-    const quantity_in_cart = cartItem.get('quantity');
     const quantity_available = product.get('quantity_available');
-    
+   
     if (cartItem) {
       // If product is already in cart, check if the quantity to be added exceed what is avaiable in the product database
+      const quantity_in_cart = cartItem.get('quantity');
       if (quantity_in_cart < quantity_available) {
         return await cartDataLayer.updateCartItemQuantity(buyerId, productId, quantity_in_cart+1)
       }
@@ -39,7 +38,7 @@ async function addToCart(buyerId, productId, quantity) {
         return null;
       }
     }
-  } catch {
+  } catch (e) {
     throw new Error(e);
   }
 }
@@ -85,16 +84,18 @@ async function removeCartItem(buyerId, productId) {
   }
 }
 
-async function getCartTotalPrice(buyerId) {
+async function getCartSubtotalAndQuantity(buyerId) {
   try {
     let cartItems = await cartDataLayer.getCartItem(buyerId);
     cartItems = cartItems.toJSON();
-    let totalPrice = 0;
+    let subtotal = 0;
+    let totalQuantity = 0;
     cartItems.forEach((cartItem) => {
       const cartItemTotalPrice = cartItem.quantity * cartItem.product.price;
-      totalPrice += cartItemTotalPrice;
+      subtotal += cartItemTotalPrice;
+      totalQuantity += cartItem.quantity;
     })    
-    return totalPrice;
+    return [subtotal, totalQuantity];
   } catch (e) {
     throw new Error(e);
   }
@@ -121,6 +122,6 @@ module.exports = {
   removeFromCart,
   updateCartItemQuantity,
   removeCartItem,
-  getCartTotalPrice,
+  getCartSubtotalAndQuantity,
   clearCartItems
 };

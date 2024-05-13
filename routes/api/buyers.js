@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-
 const buyerServiceLayer = require('../../service-layer/buyers');
 const tokenServiceLayer = require('../../service-layer/tokens');
 const { getHashedPassword, generateAccessToken } = require('../../utils');
@@ -177,7 +176,7 @@ router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
     expires: new Date(1)
   });
 
-  await tokenServiceLayer.createBlacklistedToken(payload.refreshToken)
+  await tokenServiceLayer.createBlacklistedToken(payload.refreshToken);
   res.status(204).json({
     "message": "Logged out successfully"
   })
