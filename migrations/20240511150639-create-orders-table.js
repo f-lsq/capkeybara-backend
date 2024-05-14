@@ -27,6 +27,7 @@ exports.up = function(db) {
     subtotal: {type: "decimal", precision: 10, scale: 2, unsigned: true, notNull: true},
     total_quantity: {type: "int", unsigned: true, notNull: true},
     shipping_cost: {type: "decimal", precision: 10, scale: 2, unsigned: true, notNull: true},
+    shipping_address: {type: "text", notNull: true},
     order_status: {type: "string", length: 255, notNull: true},
     date_created: {type: "datetime", notNull: true},
     date_fulfilled: {type: "datetime"}

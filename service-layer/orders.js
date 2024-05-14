@@ -1,8 +1,17 @@
 const orderDataLayer = require('../data-access-layer/orders');
 
-async function getAllOrders(buyerId) {
+async function getAllBuyerOrders(buyerId) {
   try {
-    const allOrders = await orderDataLayer.getAllOrders(buyerId);  
+    const allOrders = await orderDataLayer.getAllBuyerOrders(buyerId);  
+    return allOrders;
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
+async function getAllSellerOrders(sellerId) {
+  try {
+    const allOrders = await orderDataLayer.getAllSellerOrders(sellerId);  
     return allOrders;
   } catch (e) {
     throw new Error(e);
@@ -47,7 +56,8 @@ async function updateOrderStatus(orderId, orderStatus) {
 
 
 module.exports = {
-  getAllOrders,
+  getAllBuyerOrders,
+  getAllSellerOrders,
   createOrder,
   createOrderItem,
   getOrder,

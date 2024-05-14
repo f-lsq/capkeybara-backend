@@ -1,6 +1,6 @@
 const { OrderItem, Order } = require("../models");
 
-const getAllOrders = async (buyerId) => {
+const getAllBuyerOrders = async (buyerId) => {
   return await Order.collection().where({
     'buyer_id': buyerId
   }).fetch({
@@ -12,6 +12,21 @@ const getAllOrders = async (buyerId) => {
     ]
   })
 }
+
+const getAllSellerOrders = async (sellerId) => {
+  return await Order.query(qb => {
+    qb.join('order_items', 'orders.id', 'order_items.order_id')
+      .join('products', 'order_items.product_id', 'products.id')
+      .where('products.seller_id', sellerId)
+      .groupBy('orders.id'); // Ensure each order is listed once
+  }).fetchAll({
+    withRelated: [
+      'order_items', 
+      'order_items.product',
+      'order_items.product.category'
+    ]
+  });
+};
 
 const createOrder = async (orderData) => {
   try {
@@ -66,7 +81,8 @@ const updateOrderStatus = async (orderId, orderStatus) => {
 }
 
 module.exports = {
-  getAllOrders,
+  getAllBuyerOrders,
+  getAllSellerOrders,
   createOrder,
   createOrderItem,
   getOrder,

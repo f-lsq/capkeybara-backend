@@ -74,7 +74,7 @@ router.get('/:sellerId', async (req, res) => {
 })
 
 // Get a seller's information by decoding JWT
-router.get("/profile", checkIfAuthenticatedJWT, async (req, res) => {
+router.post("/profile", checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const payload = req.payload;
     res.status(200).json({
@@ -104,8 +104,8 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const sellerData = await sellerServiceLayer.getSellerByLoginCredentials(email, password)
     if (sellerData) {
-      const accessToken = generateAccessToken(sellerData, process.env.TOKEN_SECRET, '15m');
-      const refreshToken = generateAccessToken(sellerData, process.env.REFRESH_TOKEN_SECRET, '7d');
+      const accessToken = generateAccessToken(sellerData, process.env.TOKEN_SECRET, '15m', 'seller');
+      const refreshToken = generateAccessToken(sellerData, process.env.REFRESH_TOKEN_SECRET, '7d', 'seller');
 
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
@@ -144,7 +144,7 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
     name: payload.name,
     username: payload.username,
     email: payload.email,
-  }, process.env.TOKEN_SECRET, '15m');
+  }, process.env.TOKEN_SECRET, '15m', 'seller');
   
   res.cookie('accessToken', accessToken, {
     httpOnly: true,

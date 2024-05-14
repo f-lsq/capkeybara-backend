@@ -144,7 +144,7 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
     first_name: payload.first_name,
     username: payload.username,
     email: payload.email,
-  }, process.env.TOKEN_SECRET, '15m');
+  }, process.env.TOKEN_SECRET, '15m', 'buyer');
 
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
