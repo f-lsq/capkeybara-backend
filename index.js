@@ -39,13 +39,13 @@ app.use(cors({
   credentials: true
 }));
 
-// // Enable sessions
-// app.use(session({
-//   store: new FileStore(), // store session data in files
-//   secret: process.env.SESSION_SECRET_KEY, // secret key
-//   resave: false,
-//   saveUninitialized: true // if a browser connects to the server without a session, create a new one immediately
-// }))
+// Enable sessions
+app.use(session({
+  store: new FileStore(), // store session data in files
+  secret: process.env.SESSION_SECRET_KEY, // secret key
+  resave: false,
+  saveUninitialized: true // if a browser connects to the server without a session, create a new one immediately
+}))
 
 // Enable flash messages (must be after sessions)
 app.use(flash());

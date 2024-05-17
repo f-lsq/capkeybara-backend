@@ -17,20 +17,20 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return db.createTable('cart_items', {
     id: { type: "int", primaryKey: true, unsigned: true, autoIncrement: true },
-    product_id: {type: "int", unsigned: true, notNull: true,
-                foreignKey: {name: 'cart_items_products_fk',
-                              table: 'products', 
-                              mapping: 'id',
-                              rules: {
-                                onDelete: "RESTRICT", // could send email to buyers for deleted product (maybe because vendor deleted the product)
-                                onUpdate: "RESTRICT"
-                              }}},
     buyer_id: {type: "int", unsigned: true, notNull: true,
                 foreignKey: {name: 'cart_items_buyers_fk',
                               table: 'buyers', 
                               mapping: 'id',
                               rules: {
                                 onDelete: "RESTRICT",
+                                onUpdate: "RESTRICT"
+                              }}},
+    product_id: {type: "int", unsigned: true, notNull: true,
+                foreignKey: {name: 'cart_items_products_fk',
+                              table: 'products', 
+                              mapping: 'id',
+                              rules: {
+                                onDelete: "RESTRICT", // could send email to buyers for deleted product (maybe because vendor deleted the product)
                                 onUpdate: "RESTRICT"
                               }}},
     quantity: {type: "int", unsigned: true}
