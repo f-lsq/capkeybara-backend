@@ -31,9 +31,9 @@ The following has not been implemented
 * `2FA` for account signups forgot and update password (nodemailer)
 
 ### API Routes for Buyers
-Base URL for buyers `http://<your-domain-name.com>/api/buyers/`.
-| Endpoint | Method | Description                   | Request Body | Response |
-|----------|--------|-------------------------------|-----------------------|----------|
+Base URL for buyers `http://<your-domain-name.com>/api/buyers`.
+| Endpoint | Method | Description | Request Body | Response |
+|----------|--------|-------------|--------------|----------|
 | `/` | GET | Get information of all buyers |   | Status 200 - returns data of all buyers <br>Status 500 - returns an error message |
 | `/` | POST | Creates a new buyer <br> (Incomplete data) | { <br>&emsp;"username": string, <br>&emsp;"email": string, <br>&emsp;"password": string, <br>&emsp;"confirm_password": string <br> } | Status 200 - returns a message requesting for more signup details <br>Status 409 - returns an error message indicating that the buyer username and/or email already exist <br>Status 500 - returns an error message   |
 | `/` | POST | Creates a new buyer <br> (Full data) | { <br>&emsp;"username": string, <br>&emsp;"email": string, <br>&emsp;"password": string, <br>&emsp;"confirm_password": string, <br>&emsp;"first_name": string, <br>&emsp;"last_name": string, <br>&emsp;"contact": string, <br>&emsp;"address": string <br> } | Status 201 - returns a success message and data of the new buyer created <br>Status 400 - returns an error message indicating an error during new account creation <br>Status 500 - returns an error message   |
@@ -48,9 +48,9 @@ Possible Improvement for Buyers API route
 2. **Filtering the payload information for buyer profile before it is sent to the frontend.** <br> Upon successful decryption of buyer access token, the payload containing the id, email, first name, username and role of the buyer is returned. Additionally, the 'exp' and 'iat' of the payload is also returned. These information can be filtered out before sending back the data of the buyer to the frontend as they are crucial information for hackers who make use of the access tokens.
 
 ### API Routes for Sellers
-Base URL for sellers `http://<your-domain-name.com>/api/sellers/`.
-| Endpoint | Method | Description                   | Request Body | Response |
-|----------|--------|-------------------------------|-----------------------|----------|
+Base URL for sellers `http://<your-domain-name.com>/api/sellers`.
+| Endpoint | Method | Description | Request Body | Response |
+|----------|--------|-------------|--------------|----------|
 | `/` | GET | Get information of all sellers |   | Status 200 - returns data of all sellers <br>Status 500 - returns an error message |
 | `/` | POST | Creates a new seller <br> (Incomplete data) | { <br>&emsp;"username": string, <br>&emsp;"email": string, <br>&emsp;"password": string, <br>&emsp;"confirm_password": string <br> } | Status 200 - returns a message requesting for more signup details <br>Status 409 - returns an error message indicating that the seller username and/or email already exist <br>Status 500 - returns an error message   |
 | `/` | POST | Creates a new seller <br> (Full data) | { <br>&emsp;"username": string, <br>&emsp;"email": string, <br>&emsp;"password": string, <br>&emsp;"confirm_password": string, <br>&emsp;"first_name": string, <br>&emsp;"last_name": string, <br>&emsp;"contact": string, <br>&emsp;"address": string <br> } | Status 201 - returns a success message and data of the new seller created <br>Status 400 - returns an error message indicating an error during new account creation <br>Status 500 - returns an error message   |
@@ -63,17 +63,31 @@ Base URL for sellers `http://<your-domain-name.com>/api/sellers/`.
 Possible Improvement for Sellers API route are similar to that of [Buyers](#api-routes-for-buyers).
 
 ### API Routes for Products
+Base URL for products `http://<your-domain-name.com>/api/products`.
+| Endpoint | Method | Description | Request Body | Response |
+|----------|--------|-------------|--------------|----------|
+| `/` | GET | Get information of all products |   | Status 200 - returns data of all products <br>Status 500 - returns an error message |
+| `/categories` | GET | Get information of all product categories |   | Status 200 - returns data of all product categories <br>Status 500 - returns an error message |
+| `/seller/:sellerId` | GET | Get all products of a seller with ID *sellerId* |   | Status 200 - returns data of all product categories <br>Status 500 - returns an error message |
 
 ### API Routes for Cart
+Base URL for cart `http://<your-domain-name.com>/api/cart`.
 
 ### API Routes for Orders
+Base URL for orders `http://<your-domain-name.com>/api/orders`.
 
-### API Routes for Tokens
-
+### API Routes for Checkout
+Base URL for checkout `http://<your-domain-name.com>/api/checkout`.
 
 
 ## Functionalities
 ### User Authentication
+
+### Product Management
+
+### Cart Item Management
+
+### Order Creation and Status Management
 
 ### Payment Processing
 

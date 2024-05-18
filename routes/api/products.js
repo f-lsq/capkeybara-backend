@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router();
 
 const productServiceLayer = require('../../service-layer/products');
+const { checkIfAuthenticatedJWT } = require('../../middlewares');
 
 // Gets all products information
 router.get('/', async (req, res) => {
@@ -11,11 +12,10 @@ router.get('/', async (req, res) => {
       allProducts
     });
   } catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       "error": e.message
     })
   }
-  
 })
 
 // Gets all product categories
@@ -26,14 +26,12 @@ router.get('/categories', async (req, res) => {
       allCategories
     });
   } catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       "error": e.message
     })
   }
   
 })
-
-
 
 // Get all products by sellers
 router.get('/seller/:sellerId', async (req, res) => {
@@ -51,14 +49,14 @@ router.get('/seller/:sellerId', async (req, res) => {
       })
     }
   } catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       "error": e.message
     })
   }
 })
 
 // Creates a new product
-router.post('/', async (req, res) => {
+router.post('/', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { ...productData } = req.body;
     const newProduct = await productServiceLayer.createProduct(productData);
@@ -73,7 +71,7 @@ router.post('/', async (req, res) => {
 })
 
 // Get an existing product by ID
-router.get('/:productId', async (req, res) => {
+router.get('/:productId', checkIfAuthenticatedJWT,async (req, res) => {
   try {
     const { productId } = req.params;
     const existingProduct = await productServiceLayer.getProductById(productId)
@@ -95,7 +93,7 @@ router.get('/:productId', async (req, res) => {
 })
 
 // Update an existing product
-router.put('/:productId', async (req, res) => {
+router.put('/:productId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { productId } = req.params;
     const { ...newProductData } = req.body;
@@ -118,7 +116,7 @@ router.put('/:productId', async (req, res) => {
 })
 
 // Delete an existing product
-router.delete('/:productId', async (req, res) => {
+router.delete('/:productId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { productId } = req.params;
     const deletedProduct = await productServiceLayer.deleteProduct(productId);

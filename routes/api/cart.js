@@ -28,7 +28,7 @@ router.get('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
 
 // Creates a new cart item, or
 // Increate cart item quantity by 1
-router.post('/:buyerId', async (req, res) => {
+router.post('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { buyerId } = req.params;
     const  productId = req.body.product_id;
