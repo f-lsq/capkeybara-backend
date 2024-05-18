@@ -69,7 +69,7 @@ const checkIfAuthenticatedRefreshJWT = async (req, res, next) => {
       req.payload = {
         ...payload,
         refreshToken,
-      }
+      } // Attach payload and refresh to request object
       next();
   })
 }

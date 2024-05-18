@@ -8,7 +8,16 @@ const { checkIfAuthenticatedJWT, checkIfAuthenticatedRefreshJWT } = require('../
 
 // Gets all seller information
 router.get('/', async (req, res) => {
-  res.send(await sellerServiceLayer.getAllSellers());
+  try {
+    const allSellers = await sellerServiceLayer.getAllSellers();
+    res.status(200).json({
+      allSellers
+    })
+  } catch (e) {
+    res.status(500).json({
+      "error": e.message
+    })
+  }
 })
 
 // Creates a new seller during sign up
@@ -36,16 +45,15 @@ router.post('/', async (req, res) => {
           "message": "Moving to second signup page. Please provide more details for complete sign up."
         })
       }
-
     } else {
-      res.status(403).json({
+      res.status(409).json({
         "error": "Seller already exist",
         existingSeller
       })
     }
   }
   catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       "error": e.message
     })
   }
@@ -67,7 +75,7 @@ router.get('/:sellerId', async (req, res) => {
       })
     }
   } catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       "error": e.message
     })
   }
@@ -85,7 +93,6 @@ router.post("/profile", checkIfAuthenticatedJWT, async (req, res) => {
       "error": e.message
     })
   }
-  
 })
 
 router.post("/forgot-password", async (req, res) => {
@@ -137,51 +144,64 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
-  const payload = req.payload;
+  try {
+    const payload = req.payload;
 
-  let accessToken = generateAccessToken({
-    id: payload.id,
-    name: payload.name,
-    username: payload.username,
-    email: payload.email,
-  }, process.env.TOKEN_SECRET, '15m', 'seller');
-  
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    sameSite: 'strict', // 'None' for HTTPS
-    secure: true,
-    maxAge: 24 * 60 * 60 * 1000
-  })
-  
-  res.status(200).json({
-    accessToken
-  })
+    // Generate a new access token with a 15-minute expiry
+    let accessToken = generateAccessToken({
+      id: payload.id,
+      name: payload.name,
+      username: payload.username,
+      email: payload.email,
+    }, process.env.TOKEN_SECRET, '15m', 'seller');
+
+    // Set the access token as an HTTP-only cookie
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      sameSite: 'strict', // 'None' for HTTPS
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    })
+
+    // Respond with the new access token
+    res.status(200).json({
+      accessToken
+    })
+  } catch (e) {
+    res.status(500).json({
+      "error": e.message
+    })
+  }
 })
 
 router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
-  const payload = req.payload;
+  try {
+    const payload = req.payload;
 
-  // Replacing old cookies with one that expires immediately
-  res.cookie("accessToken", "", {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    expires: new Date(1)
-  });
-
-  res.cookie("refreshToken", "", {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    expires: new Date(1)
-  });
-
-  // Replacing old cookies with one that expires immediately
-  await tokenServiceLayer.createBlacklistedToken(payload.refreshToken);
-  res.status(204).json({
-    "message": "Logged out successfully"
-  })
-
+    // Replacing old cookies with one that expires immediately
+    res.cookie("accessToken", "", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      expires: new Date(1)
+    });
+  
+    res.cookie("refreshToken", "", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      expires: new Date(1)
+    });
+  
+    await tokenServiceLayer.createBlacklistedToken(payload.refreshToken);
+    
+    // Respond with 204 No Content to indicate successful logout without response body
+    res.status(204).end();
+  } catch (e) {
+    res.status(500).json({
+      "error": e.message
+    })
+  }
 })
 
 module.exports = router;

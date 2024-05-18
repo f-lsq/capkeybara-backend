@@ -8,7 +8,16 @@ const { checkIfAuthenticatedJWT, checkIfAuthenticatedRefreshJWT } = require('../
 
 // Gets all buyer information
 router.get('/', async (req, res) => {
-  res.send(await buyerServiceLayer.getAllBuyers());
+  try {
+    const allBuyers = await buyerServiceLayer.getAllBuyers();
+    res.status(200).json({
+      allBuyers
+    })
+  } catch (e) {
+    res.status(500).json({
+      "error": e.message
+    })
+  }
 })
 
 // Creates a new buyer during sign up
@@ -26,7 +35,7 @@ router.post('/', async (req, res) => {
         if (newBuyer.error) {
           res.status(400).json(newBuyer.error)
         } else {
-          res.status(200).json({
+          res.status(201).json({
             "message": "New account created succesfully",
             "data": newBuyer
           })
@@ -36,16 +45,15 @@ router.post('/', async (req, res) => {
           "message": "Moving to second signup page. Please provide more details for complete sign up."
         })
       }
-
     } else {
-      res.status(403).json({
+      res.status(409).json({
         "error": "Buyer already exist",
         existingBuyer
       })
     }
   }
   catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       "error": e.message
     })
   }
@@ -64,10 +72,10 @@ router.get('/:buyerId', async (req, res) => {
     } else {
       res.status(400).json({
         "error": `Buyer of ID ${buyerId} not found`
-      })  
-    }  
+      })
+    }
   } catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       "error": e.message
     })
   }
@@ -77,15 +85,14 @@ router.get('/:buyerId', async (req, res) => {
 router.post("/profile", checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const payload = req.payload;
-  res.status(200).json({
-    payload
-  });
+    res.status(200).json({
+      payload
+    });
   } catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       "error": e.message
     })
   }
-  
 })
 
 router.post("/forgot-password", async (req, res) => {
@@ -137,50 +144,64 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
-  const payload = req.payload;
+  try {
+    const payload = req.payload;
 
-  let accessToken = generateAccessToken({
-    id: payload.id,
-    first_name: payload.first_name,
-    username: payload.username,
-    email: payload.email,
-  }, process.env.TOKEN_SECRET, '15m', 'buyer');
+    // Generate a new access token with a 15-minute expiry
+    let accessToken = generateAccessToken({
+      id: payload.id,
+      first_name: payload.first_name,
+      username: payload.username,
+      email: payload.email,
+    }, process.env.TOKEN_SECRET, '15m', 'buyer');
 
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    sameSite: 'strict', // 'None' for HTTPS
-    secure: true,
-    maxAge: 24 * 60 * 60 * 1000
-  })
+    // Set the access token as an HTTP-only cookie
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      sameSite: 'strict', // 'None' for HTTPS
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    })
 
-  res.status(200).json({
-    accessToken
-  })
+    // Respond with the new access token
+    res.status(200).json({
+      accessToken
+    })
+  } catch (e) {
+    res.status(500).json({
+      "error": e.message
+    })
+  }
 })
 
 router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
-  const payload = req.payload;
+  try {
+    const payload = req.payload;
 
-  // Replacing old cookies with one that expires immediately
-  res.cookie("accessToken", "", {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    expires: new Date(1)
-  });
+    // Replacing old cookies with one that expires immediately
+    res.cookie("accessToken", "", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      expires: new Date(1)
+    });
 
-  res.cookie("refreshToken", "", {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    expires: new Date(1)
-  });
+    res.cookie("refreshToken", "", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+      expires: new Date(1)
+    });
 
-  await tokenServiceLayer.createBlacklistedToken(payload.refreshToken);
-  res.status(204).json({
-    "message": "Logged out successfully"
-  })
+    await tokenServiceLayer.createBlacklistedToken(payload.refreshToken);
 
+    // Respond with 204 No Content to indicate successful logout without response body
+    res.status(204).end();
+  } catch (e) {
+    res.status(500).json({
+      "error": e.message
+    })
+  }
 })
 
 module.exports = router;

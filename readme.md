@@ -12,6 +12,7 @@ Whether you're a seasoned keyboard enthusiast, a newbie exploring the world of m
 
 ## Table of Contents
 1. [System Design](#system-design)
+2. [Functionalities](#functionalities)
 2. [Technologies Used](#technologies-used)
 3. [References](#references)
 
@@ -20,21 +21,63 @@ Whether you're a seasoned keyboard enthusiast, a newbie exploring the world of m
 ![Entity Relationship Diagram](assets/images/readme/erd.png)
 
 ### SQL Schema Diagram
+The relational DB, MySQL, was chosen due the relationship between entities. The schema is as shown below.
 ![SQL Schema](assets/images/readme/schema.png)
-Note that the following has not been implemented: 
-* `Discounts` for products
-* `2FA` for account signups forgot and update password
 
-### API Routes
-| Method/Path                         | Request Body / Parameters  | Response                           | 
-| -----------------------------------| -------------------------- | ---------------------------------- | 
-| GET /products                      |                            | On success,... <br/>On failure,... | 
-| POST /products/add/:productId      | {<br/>"name": string, <br/> "description": string,<br/> etc <br/>}                           | On success,... <br/>On failure,... | 
-| PUT /products/edit/:productId      |                            | On success,... <br/>On failure,... | 
-| DELETE /products/delete/:productId |                            | On success,... <br/>On failure,... | 
+Do note that the *password* field will be hashed using [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) before it is stored in the DB. 
+
+The following has not been implemented 
+* `Discounts` for products
+* `2FA` for account signups forgot and update password (nodemailer)
+
+### API Routes for Buyers
+Base URL for buyers `http://<your-domain-name.com>/api/buyers/`.
+| Endpoint | Method | Description                   | Request Body | Response |
+|----------|--------|-------------------------------|-----------------------|----------|
+| `/` | GET | Get information of all buyers |   | Status 200 - returns data of all buyers <br>Status 500 - returns an error message |
+| `/` | POST | Creates a new buyer <br> (Incomplete data) | { <br>&emsp;"username": string, <br>&emsp;"email": string, <br>&emsp;"password": string, <br>&emsp;"confirm_password": string <br> } | Status 200 - returns a message requesting for more signup details <br>Status 409 - returns an error message indicating that the buyer username and/or email already exist <br>Status 500 - returns an error message   |
+| `/` | POST | Creates a new buyer <br> (Full data) | { <br>&emsp;"username": string, <br>&emsp;"email": string, <br>&emsp;"password": string, <br>&emsp;"confirm_password": string, <br>&emsp;"first_name": string, <br>&emsp;"last_name": string, <br>&emsp;"contact": string, <br>&emsp;"address": string <br> } | Status 201 - returns a success message and data of the new buyer created <br>Status 400 - returns an error message indicating an error during new account creation <br>Status 500 - returns an error message   |
+| `/:buyerId` | GET | Get information of a buyer with ID *buyerId* |   | Status 200 - returns a success message and data of the found buyer <br> Status 400 - returns an error message indicating that the buyer is not found <br> Status 500 - returns an error message |
+| `/profile` | POST | Get profile of an authenticated buyer | Valid access token retrieved from cookies  | Status 200 - returns payload of the authenticated buyer <br> Status 401 - returns an error message requiring buyers to login <br> Status 403 - returns an error message indicating an invalid access token <br> Status 500 - returns an error message |
+| `/login` | POST | Verifies the login credential of a buyer | { <br>&emsp;"username": string, <br>&emsp;"password": string <br> }  | Status 201 - returns a success message <br> Status 401 - returns an error message indicating invalid login credentials <br>Status 500 - returns an error message |
+| `/refresh` | POST | Refresh an expired access token using the refresh token | Valid refresh token retrieved from cookies  | Status 200 - returns a new access token <br> Status 401 - returns an error message indicating no refresh token found <br> Status 403 - returns an error message indicating an invalid refresh token <br> Status 500 - returns an error message |
+| `/logout` | POST | Removes the access and refresh tokens from cookie, and blacklists refresh token when a buyer logs out | Valid refresh token retrieved from cookies  | Status 204 - no response <br> Status 401 - returns an error message indicating no refresh token found <br> Status 403 - returns an error message indicating an invalid refresh token <br> Status 500 - returns an error message |
+
+Possible Improvement for Buyers API route
+1. **Hashing password in the frontend before it is sent to the backend.** <br>Currently the new buyer data is sent over to the backend, with the *password* and *confirm-password* field being strings. This will be subject to [MITM attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack). A better alternative is to hash the passwords after the new buyer has submitted his/her datato prevent information from being stolen during transmission.
+2. **Filtering the payload information for buyer profile before it is sent to the frontend.** <br> Upon successful decryption of buyer access token, the payload containing the id, email, first name, username and role of the buyer is returned. Additionally, the 'exp' and 'iat' of the payload is also returned. These information can be filtered out before sending back the data of the buyer to the frontend as they are crucial information for hackers who make use of the access tokens.
+
+### API Routes for Sellers
+Base URL for sellers `http://<your-domain-name.com>/api/sellers/`.
+| Endpoint | Method | Description                   | Request Body | Response |
+|----------|--------|-------------------------------|-----------------------|----------|
+| `/` | GET | Get information of all sellers |   | Status 200 - returns data of all sellers <br>Status 500 - returns an error message |
+| `/` | POST | Creates a new seller <br> (Incomplete data) | { <br>&emsp;"username": string, <br>&emsp;"email": string, <br>&emsp;"password": string, <br>&emsp;"confirm_password": string <br> } | Status 200 - returns a message requesting for more signup details <br>Status 409 - returns an error message indicating that the seller username and/or email already exist <br>Status 500 - returns an error message   |
+| `/` | POST | Creates a new seller <br> (Full data) | { <br>&emsp;"username": string, <br>&emsp;"email": string, <br>&emsp;"password": string, <br>&emsp;"confirm_password": string, <br>&emsp;"first_name": string, <br>&emsp;"last_name": string, <br>&emsp;"contact": string, <br>&emsp;"address": string <br> } | Status 201 - returns a success message and data of the new seller created <br>Status 400 - returns an error message indicating an error during new account creation <br>Status 500 - returns an error message   |
+| `/:sellerId` | GET | Get information of a seller with ID *sellerId* |   | Status 200 - returns a success message and data of the found seller <br> Status 400 - returns an error message indicating that the seller is not found <br> Status 500 - returns an error message |
+| `/profile` | POST | Get profile of an authenticated seller | Valid access token retrieved from cookies  | Status 200 - returns payload of the authenticated seller <br> Status 401 - returns an error message requiring sellers to login <br> Status 403 - returns an error message indicating an invalid access token <br> Status 500 - returns an error message |
+| `/login` | POST | Verifies the login credential of a seller | { <br>&emsp;"username": string, <br>&emsp;"password": string <br> }  | Status 201 - returns a success message <br> Status 401 - returns an error message indicating invalid login credentials <br>Status 500 - returns an error message |
+| `/refresh` | POST | Refresh an expired access token using the refresh token | Valid refresh token retrieved from cookies  | Status 200 - returns a new access token <br> Status 401 - returns an error message indicating no refresh token found <br> Status 403 - returns an error message indicating an invalid refresh token <br> Status 500 - returns an error message |
+| `/logout` | POST | Removes the access and refresh tokens from cookie, and blacklists refresh token when a seller logs out | Valid refresh token retrieved from cookies  | Status 204 - no response <br> Status 401 - returns an error message indicating no refresh token found <br> Status 403 - returns an error message indicating an invalid refresh token <br> Status 500 - returns an error message |
+
+Possible Improvement for Sellers API route are similar to that of [Buyers](#api-routes-for-buyers).
+
+### API Routes for Products
+
+### API Routes for Cart
+
+### API Routes for Orders
+
+### API Routes for Tokens
+
+
+
+## Functionalities
+### User Authentication
+
+### Payment Processing
 
 ## Technologies Used
-
 ### Frontend
 * [ReactJS](https://react.dev/reference/react) - Route access restriction, navigation between pages, form control using useForm
 * [Cloudinary](https://cloudinary.com/documentation/upload_widget) - Image upload widget for buyer and seller and product images
