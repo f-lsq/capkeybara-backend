@@ -1,5 +1,26 @@
 const productDataLayer = require('../data-access-layer/products');
 
+const validateProductData = (data) => {
+  const updatableFields = [
+    "name", 
+    "description",
+    "price", 
+    "cost", 
+    "quantity_available", 
+    "image_url", 
+    "category_id", 
+    "seller_id"
+  ]
+  const productDataFields = Object.keys(data);
+  
+  // check for invalid fields
+  const invalidFields = productDataFields.filter((productDataField) => !updatableFields.includes(productDataField));
+
+  if (invalidFields.length > 0) {
+    throw new Error(`Invalid field name (${invalidFields.join(', ')})`);
+  } 
+}
+
 async function getAllProducts(){
   try {
     const allProducts = await productDataLayer.getAllProducts()
@@ -61,6 +82,7 @@ async function updateProduct(productId, newProductData) {
   try {
     let existingProduct = await productDataLayer.getProductById(productId);
     if (existingProduct) {
+      validateProductData(newProductData);
       const updatedProduct = await productDataLayer.updateProduct(
         existingProduct,
         {
