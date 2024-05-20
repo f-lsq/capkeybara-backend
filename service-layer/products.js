@@ -7,9 +7,10 @@ const validateProductData = (data) => {
     "price", 
     "cost", 
     "quantity_available", 
+    "quantity_sold",
     "image_url", 
     "category_id", 
-    "seller_id"
+    "seller_id"    
   ]
   const productDataFields = Object.keys(data);
   

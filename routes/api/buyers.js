@@ -71,7 +71,7 @@ router.get('/:buyerId', async (req, res) => {
       });
     } else {
       res.status(400).json({
-        "error": `Buyer of ID ${buyerId} not found`
+        "error": `Buyer of ID ${buyerId} does not exist`
       })
     }
   } catch (e) {

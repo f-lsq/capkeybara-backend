@@ -1,25 +1,28 @@
 const express = require('express');
 const router = express.Router();
 
-const cartServiceLayer = require('../../service-layer/cart');
-const productServiceLayer = require('../../service-layer/products');
-const orderServiceLayer = require('../../service-layer/orders');
 const buyerServiceLayer = require('../../service-layer/buyers');
+const cartServiceLayer = require('../../service-layer/cart');
+const orderServiceLayer = require('../../service-layer/orders');
+const productServiceLayer = require('../../service-layer/products');
 const { checkIfAuthenticatedJWT } = require('../../middlewares');
 
 // Gets all orders of a buyer
-router.get('/:buyerId', async (req, res) => {
+router.get('/:buyerId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { buyerId } = req.params;
-    const allOrders = await orderServiceLayer.getAllBuyerOrders(buyerId);
-    if (allOrders) {
-      res.status(200).json({
-        "success": `All orders for buyer ID ${buyerId} found`,
-        allOrders
-      })
+    const existingBuyer = await buyerServiceLayer.getBuyerById(buyerId);
+    if (existingBuyer) {
+      const allOrders = await orderServiceLayer.getAllBuyerOrders(buyerId);
+      if (allOrders) {
+        res.status(200).json({
+          "success": `All orders for buyer ID ${buyerId} found`,
+          allOrders
+        })
+      }
     } else {
-      res.status(400).json({
-        "error": `All orders for buyer ID ${buyerId} was not found`
+      res.status(404).json({
+        "error": `Buyer of ID ${buyerId} does not exist`
       })
     }
   } catch (e) {
@@ -30,18 +33,20 @@ router.get('/:buyerId', async (req, res) => {
 })
 
 // Gets all orders of a seller
-router.get('/seller/:sellerId', async (req, res) => {
+router.get('/seller/:sellerId', checkIfAuthenticatedJWT, async (req, res) => {
   try {
     const { sellerId } = req.params;
-    const allOrders = await orderServiceLayer.getAllSellerOrders(sellerId);
-    if (allOrders) {
-      res.status(200).json({
-        "success": `All orders with seller ID ${sellerId} found`,
-        allOrders
-      })
+    if (req.payload.id === Number(sellerId)) {
+      const allOrders = await orderServiceLayer.getAllSellerOrders(sellerId);
+      if (allOrders) {
+        res.status(200).json({
+          "success": `All orders with seller ID ${sellerId} found`,
+          allOrders
+        })
+      }
     } else {
-      res.status(400).json({
-        "error": `All orders with seller ID ${sellerId} was not found`
+      res.status(403).json({
+        "error": "Access denied: you can only access your own orders"
       })
     }
   } catch (e) {
@@ -105,15 +110,22 @@ router.put('/:orderId', async (req, res) => {
   try {
       const { orderId } = req.params;
       const { order_status } = req.body;
-      const updatedOrder = await orderServiceLayer.updateOrderStatus(orderId, order_status);
-      if (updatedOrder) {
-        res.status(200).json({
-          "success": `Order status updated for order ID ${orderId}`,
-          updatedOrder
-        })
+      const existingOrder = await orderServiceLayer.getOrder(orderId);
+      if (existingOrder) {
+        const updatedOrder = await orderServiceLayer.updateOrderStatus(orderId, order_status);
+        if (updatedOrder) {
+          res.status(200).json({
+            "success": `Order status updated for order ID ${orderId}`,
+            updatedOrder
+          })
+        } else {
+          res.status(400).json({
+            "error": `Order status was not updated for order ID ${orderId}`
+          })
+        }
       } else {
-        res.status(400).json({
-          "error": `Order status was not updated for order ID ${orderId}`
+        res.status(404).json({
+          "error": `Order of ID ${orderId} does not exist`
         })
       }
   } catch (e) {
