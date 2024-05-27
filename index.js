@@ -100,7 +100,6 @@ const api = {
   products: require('./routes/api/products'),
   buyers: require('./routes/api/buyers'),
   sellers: require('./routes/api/sellers'),
-  cloudinary: require('./routes/api/cloudinary'),
   cart: require('./routes/api/cart'),
   checkout: require('./routes/api/checkout'),
   orders: require('./routes/api/orders')
@@ -125,7 +124,6 @@ async function main() {
   app.use('/api/products', express.json(), api.products);
   app.use('/api/buyers', express.json(), api.buyers);
   app.use('/api/sellers', express.json(), api.sellers);
-  app.use('/api/cloudinary', express.json(), api.cloudinary);
   app.use('/api/cart', express.json(), api.cart);
   app.use('/api/checkout', express.json(), api.checkout);
   app.use('/api/orders', express.json(), api.orders);

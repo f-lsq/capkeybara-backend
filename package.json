@@ -29,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
     "mysql": "^2.18.1",
+    "mysql2": "^3.9.8",
     "nodemailer": "^6.9.13",
     "session-file-store": "^1.5.0",
     "stripe": "^15.5.0",

@@ -2,7 +2,3 @@
 node_modules
 sessions
 .env
-
-# SENSITIVE INFORMATION
-bookshelf/index.js
-database.json
