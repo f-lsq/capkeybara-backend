@@ -133,8 +133,7 @@ async function main() {
 
 main();
 
-
-const PORT_NUMBER = 3001;
+const PORT_NUMBER = process.env.PORT || 3001;
 app.listen(PORT_NUMBER, () => {
   console.log(`Server started at http://localhost:${PORT_NUMBER}/`);
 })
