@@ -34,10 +34,11 @@ app.use(
 app.use(cookieparser());
 
 // Enable CORS (before sessions)
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true
-}));
+app.use(cors());
+// app.use(cors({
+//   origin: process.env.FRONTEND_URL,
+//   credentials: true
+// }));
 
 // Enable sessions
 app.use(session({
