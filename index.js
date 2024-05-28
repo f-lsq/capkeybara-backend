@@ -34,11 +34,18 @@ app.use(
 app.use(cookieparser());
 
 // Enable CORS (before sessions)
-app.use(cors());
-// app.use(cors({
-//   origin: process.env.FRONTEND_URL,
-//   credentials: true
-// }));
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+});
 
 // Enable sessions
 app.use(session({
