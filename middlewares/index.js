@@ -20,7 +20,6 @@ const checkIfAuthenticatedJWT = (req, res, next) => {
   const accessToken = req.cookies.accessToken;
   
   // const authHeader = req.headers.authorization;
-  // console.log(authHeader);
   
   if (accessToken) {
     // extracts JWT (with no 'Bearer' infront)
@@ -50,7 +49,7 @@ const checkIfAuthenticatedRefreshJWT = async (req, res, next) => {
   const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
-    return res.send(401).json({
+    return res.status(401).json({
       "error": "No refresh token found"
     });
   }

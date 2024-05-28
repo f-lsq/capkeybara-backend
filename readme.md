@@ -123,6 +123,8 @@ The flow is illustrated in the [sequence diagram](https://en.wikipedia.org/wiki/
 
 Cookies was chosen over session and localStorage due to its ability to protect against Cross-Site Scripting (XSS) attacks.The `HttpOnly` flag prevents malicious scripts from accessing the cookies, thus providing a better safeguard for user sessions and sensitive information.
 
+A request is sent using a refreshToken to get a new accessToken whenever the accessToken is close to expiry. If the new token fails to be generated, the user has to log in again. Upon log out, the refresh token is added to a black list, preventing it from being reused.
+
 ### Product Management
 The [product API routes](#api-routes-for-products) allows sellers and admin to create, update and delete products with ease. The product information are also [displayed on the frontend](https://github.com/f-lsq/capkeybara-frontend?tab=readme-ov-file#seller-product-page), allowing easy management. 
 

@@ -14,6 +14,7 @@ router.get('/:userId', checkIfAuthenticatedJWT, async function (req, res) {
       const items = await cartServiceLayer.getCartItem(userId);
       const lineItems = [];
 
+      // Create line items for each product in the user's cart
       for (let i of items) {
         const lineItem = {
           // quantity: set the quantity
@@ -41,6 +42,21 @@ router.get('/:userId', checkIfAuthenticatedJWT, async function (req, res) {
         // push the finished lineItem into the array
         lineItems.push(lineItem);
       }
+      
+      // Creates line item for shipping (set as $2.00 per item)
+      const responseSubtotalQty = await cartServiceLayer.getCartSubtotalAndQuantity(userId);
+      const shippingLineItem = {
+        quantity: responseSubtotalQty[1],
+        price_data: {
+          currency: "SGD",
+          unit_amount: 2 * 100,
+          product_data: {
+            name: "Shipping Fee",
+            images: ["https://cdn-icons-png.flaticon.com/512/66/66841.png"]
+          }
+        }
+      }
+      lineItems.push(shippingLineItem);
 
       // 2. Create a payment session
       const payment = {
