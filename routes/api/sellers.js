@@ -116,14 +116,14 @@ router.post('/login', async (req, res) => {
 
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
-        sameSite: 'strict', // 'None' for HTTPS
+        sameSite: 'None', // 'None' for HTTPS
         secure: true,
         maxAge: 24 * 60 * 60 * 1000
       })
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        sameSite: 'strict', // 'None' for HTTPS
+        sameSite: 'None', // 'None' for HTTPS
         secure: true,
         maxAge: 24 * 60 * 60 * 1000
       })
@@ -158,7 +158,7 @@ router.post('/refresh', checkIfAuthenticatedRefreshJWT, async (req, res) => {
     // Set the access token as an HTTP-only cookie
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      sameSite: 'strict', // 'None' for HTTPS
+      sameSite: 'None', // 'None' for HTTPS
       secure: true,
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     })
