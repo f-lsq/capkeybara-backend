@@ -26,7 +26,7 @@ exports.up = async function(db) {
 };
 
 exports.down = function(db) {
-  return db.runSql("DELETE FROM categories");
+  return db.runSql("DELETE FROM categories;");
 };
 
 exports._meta = {

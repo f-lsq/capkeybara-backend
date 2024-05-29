@@ -24,7 +24,7 @@ exports.up = async function(db) {
 };
 
 exports.down = function(db) {
-  return null;
+  return db.runSql("DELETE FROM admins;");
 };
 
 exports._meta = {
