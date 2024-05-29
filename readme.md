@@ -14,7 +14,8 @@ Whether you're a seasoned keyboard enthusiast, a newbie exploring the world of m
 1. [System Design](#system-design)
 2. [Functionalities](#functionalities)
 2. [Technologies Used](#technologies-used)
-3. [References](#references)
+4. [Deployment](#deployment)
+5. [References](#references)
 
 ## System Design
 ### Entity Relationship Diagram
@@ -148,6 +149,35 @@ The third party platform, also known as [SASS](https://azure.microsoft.com/en-us
 ### Backend
 * [NodeJS](https://nodejs.org/en) - Server environment. [ExpressJS](https://expressjs.com/), [Handlebars](https://handlebarsjs.com/) for admin page templating, [Sessions](https://expressjs.com/en/resources/middleware/session.html), JWT with bcrypt for Authentication, [Bookshelf ORM](https://bookshelfjs.org/) with knex, [Stripe](https://stripe.com/) for payment processing and [caolan form](https://github.com/caolan/forms) for form control.
 * [MySQL](https://www.mysql.com/) - Database management, used in conjuntion with [db-migrate](https://db-migrate.readthedocs.io/en/latest/)
+
+## Deployment
+
+<!-- Describe the process that you used to host your website on a hosting platform (such as Github pages or Heroku). Provide the following details:
+
+1.	What is your hosting platform?
+2.	How is the database hosted?
+3.	What are the environment variables and what are they responsible for?
+4.	What are the dependencies that your project used?
+5.	What are the deployment steps for the project?
+
+You can provide deployment details in a separate document (PDF or another markdown file). There is no need to be original for this section; if another website or document have the steps, just link there and acknowledge the author in your credits. -->
+### Live Links
+* [React Frontend - Main Page](https://capkeybara.netlify.app/) (Netlify)
+* [Express Backend - Admin Page](https://capkeybara-backend.onrender.com/) (Render)
+
+*(Note that Admin Page is not yet implemented)*
+
+### Test Accounts
+| Account Type | Name                                                       | Email                     | Password          | 
+|--------------|------------------------------------------------------------|--------------------------|-------------------|
+| Buyer        | [Peter Pan](https://en.wikipedia.org/wiki/Peter_Pan)       | peterpan@neverland.com    | peterpan123@      |
+| Buyer        | [Tinker Bell](https://en.wikipedia.org/wiki/Tinker_Bell)   | tinkerbell@neverland.com  | tinkerbell123@    | 
+| Buyer        | [Captain Hook](https://en.wikipedia.org/wiki/Captain_Hook) | captainhook@neverland.com | captainhook123@   |
+| Seller       | [Epomaker](https://epomaker.com/)                          | shop@epomaker.com         | epomaker123@      |
+| Seller       | [Aula](https://www.aulastar.com/)                          | shop@aula.com             | aula123@          |
+| Seller       | [Keychron](https://www.keychron.com/)                      | shop@keychron.com         | keychron123@      |
+
+No test admin account will be provided.
 
 ## References
 * [Nadin, P. (2022 September 12). REST API Naming Conventions and Best Practices.](https://medium.com/@nadinCodeHat/rest-api-naming-conventions-and-best-practices-1c4e781eb6a5)
