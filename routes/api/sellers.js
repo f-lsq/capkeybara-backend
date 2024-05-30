@@ -181,14 +181,14 @@ router.post('/logout', checkIfAuthenticatedRefreshJWT, async (req, res) => {
     // Replacing old cookies with one that expires immediately
     res.cookie("accessToken", "", {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: 'None',
       secure: true,
       expires: new Date(1)
     });
   
     res.cookie("refreshToken", "", {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: 'None',
       secure: true,
       expires: new Date(1)
     });
