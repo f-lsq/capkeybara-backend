@@ -90,6 +90,50 @@ async function deleteProduct(existingProduct) {
   }
 }
 
+async function searchProducts(searchTerms) {
+  try {
+    const queryBuilder = Product.collection();
+
+    if (searchTerms.name) {
+      // Case insensitive - iLike
+      queryBuilder.where('name', 'ilike', '%' + searchTerms.name + '%')
+    }
+
+    if (searchTerms.brands && searchTerms.brands.length > 0) {
+      queryBuilder.where('seller_id', 'in', searchTerms.brands)
+    }
+
+    if (searchTerms.categories && searchTerms.categories.length > 0) {
+      queryBuilder.where('category_id', 'in', searchTerms.categories)
+    }
+
+    if (searchTerms.availability) {
+      if (searchTerms.availability === "in-stock") {
+        queryBuilder.where('quantity_available', '>', 0);
+      }
+      else {
+        queryBuilder.where('quantity_available', '=', 0);
+      }
+    }
+
+    if (searchTerms.price_min) {
+      queryBuilder.where('price', '>=', searchTerms.price_min);
+    }
+
+    if (searchTerms.price_max) {
+      queryBuilder.where('price', '<=', searchTerms.price_max);
+    }
+    
+    const searchedProducts = await queryBuilder.fetch({
+      withRelated: ['category']
+    })
+
+    return searchedProducts;
+  } catch(e) {
+    throw new Error(e);
+  }
+}
+
 module.exports = {
   getAllProducts,
   getAllCategories,
@@ -98,5 +142,6 @@ module.exports = {
   getProductByCategory,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  searchProducts
 }

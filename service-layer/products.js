@@ -114,7 +114,15 @@ async function deleteProduct(productId) {
   } catch (e) {
     throw new Error(e);
   }
+}
 
+async function searchProducts(searchTerms) {
+  try {
+    const searchedProducts = await productDataLayer.searchProducts(searchTerms);
+    return searchedProducts;
+  } catch (e) {
+    throw new Error(e);
+  }
 }
 
 module.exports = {
@@ -124,5 +132,6 @@ module.exports = {
   getProductBySeller,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  searchProducts
 }

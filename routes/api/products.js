@@ -175,4 +175,25 @@ router.delete('/:productId', checkIfAuthenticatedJWT, async (req, res) => {
   }
 })
 
+router.post('/search', async (req, res) => {
+  try {
+    const { ...searchTerms } = req.body;
+    const searchedProducts = await productServiceLayer.searchProducts(searchTerms);
+    if (searchedProducts) {
+      res.status(200).json({
+        "success": "Searched products found",
+        searchedProducts
+      })
+    } else {
+      res.status(404).json({
+        "error": `Unable to retrieve searched products`
+      })
+    }
+  } catch (e) {
+    res.status(500).json({
+      "error": e.message
+    })
+  }
+})
+
 module.exports = router;
