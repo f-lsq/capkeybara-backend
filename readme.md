@@ -32,7 +32,7 @@ The following has not been implemented
 * `2FA` for account signups forgot and update password (nodemailer)
 
 ### API Routes for Buyers
-Base URL for buyers `http://<domain-name.com>/api/buyers`.
+Base URL for buyers `http://capkeybara-backend.onrender.com/api/buyers`.
 | Endpoint | Method | Description | Request Body | Response | Authentication Response |
 |----------|--------|-------------|--------------|----------|-------------------------|
 | `/` | GET | Get information of all buyers |   | Status 200 - returns data of all buyers <br>Status 500 - returns an error message |   |
@@ -49,7 +49,7 @@ Potential Improvement for Buyers API route
 2. **Filtering the payload information for buyer profile before it is sent to the frontend.** <br> Upon successful decryption of buyer access token, the payload containing the id, email, first name, username and role of the buyer is returned. Additionally, the 'exp' and 'iat' of the payload is also returned. These information can be filtered out before sending back the data of the buyer to the frontend as they are crucial information for hackers who make use of the access tokens.
 
 ### API Routes for Sellers
-Base URL for sellers `http://<domain-name.com>/api/sellers`.
+Base URL for sellers `http://capkeybara-backend.onrender.com/api/sellers`.
 | Endpoint | Method | Description | Request Body | Response | Authentication Response |
 |----------|--------|-------------|--------------|----------|-------------------------|
 | `/` | GET | Get information of all sellers |   | Status 200 - returns data of all sellers <br>Status 500 - returns an error message |   |
@@ -65,7 +65,7 @@ Potential Improvement for Sellers API route are similar to that of [Buyers](#api
 1. There should also be a **validity check done on the sellers** (possibly using the vendor's UEN), before allowing them to list their products on the website. An additional column can be added to the 'sellers' table in the database to store this information.
 
 ### API Routes for Products
-Base URL for products `http://<domain-name.com>/api/products`.
+Base URL for products `http://capkeybara-backend.onrender.com/api/products`.
 | Endpoint | Method | Description | Request Body | Response | Authentication Response |
 |----------|--------|-------------|--------------|----------|-------------------------|
 | `/` | GET | Get information of all products |   | Status 200 - returns data of all products <br>Status 500 - returns an error message |   |
@@ -81,7 +81,7 @@ Potential Improvement for Products API route
 1. **Role specification.** <br> Currently, any users with a valid access token can perform CRUD operations on the products. Role specification can be added to allow only users with 'seller' and 'admin' roles (and valid access tokens) to manage the products.
 
 ### API Routes for Cart
-Base URL for cart `http://<domain-name.com>/api/cart`.
+Base URL for cart `http://capkeybara-backend.onrender.com/api/cart`.
 | Endpoint | Method | Description | Request Body | Response | Authentication Response |
 |----------|--------|-------------|--------------|----------|-------------------------|
 | `/:buyerId` | GET | Retrieves the cart items of buyer with ID *buyerId* |   | Status 200 - returns a success message and the data of the cart items of the specified buyer <br> Status 403 - returns an error message indicating that the specified buyer cannot view another buyer's cart <br> Status 500 - returns an error message | Status 401 - returns an error message requiring buyers to login <br> Status 403 - returns an error message indicating an invalid access token |
@@ -95,7 +95,7 @@ Potential Improvement for Cart API route
 2. **More specific error validation.** <br> The error that returns status 400 is does not take into other instances where, for example, users enter data of inapproperiate datatype.
 
 ### API Routes for Orders
-Base URL for orders `http://<domain-name.com>/api/orders`.
+Base URL for orders `http://capkeybara-backend.onrender.com/api/orders`.
 | Endpoint | Method | Description | Request Body | Response | Authentication Response |
 |----------|--------|-------------|--------------|----------|-------------------------|
 | `/:buyerId` | GET | Retrieves all orders of buyer with ID *buyerId* |   | Status 200 - returns a success message and the data of the orders of the specified buyer <br> Status 404 - returns an error message indicating that the specified product does not exist <br> Status 500 - returns an error message | Status 401 - returns an error message requiring buyers to login <br> Status 403 - returns an error message indicating an invalid access token |
@@ -107,7 +107,7 @@ Potential Improvement for Order API route
 1. **Segregation of order status based on sellers.** <br> Since a order can consist of many products from different sellers, the order status for a order should be separated for each seller. Currently, the order status will update across all sellers with the same order, instead, the order status could be updated from 'Unfulfilled' to 'Completed' after all sellers have updated the status of the order to 'Delivered'.
 
 ### API Routes for Checkout
-Base URL for checkout `http://<domain-name.com>/api/checkout`.
+Base URL for checkout `http://capkeybara-backend.onrender.com/api/checkout`.
 
 | Endpoint | Method | Description | Request Body | Response | Authentication Response |
 |----------|--------|-------------|--------------|----------|-------------------------|
