@@ -94,21 +94,21 @@ async function searchProducts(searchTerms) {
   try {
     const queryBuilder = Product.collection();
 
-    if (searchTerms.name) {
+    if (searchTerms.searched_name) {
       // Case insensitive - iLike
-      queryBuilder.where('name', 'ilike', '%' + searchTerms.name + '%')
+      queryBuilder.where('name', 'ilike', '%' + searchTerms.searched_name + '%')
     }
 
-    if (searchTerms.brands && searchTerms.brands.length > 0) {
-      queryBuilder.where('seller_id', 'in', searchTerms.brands)
+    if (searchTerms.searched_brands && searchTerms.searched_brands.length > 0) {
+      queryBuilder.where('seller_id', 'in', searchTerms.searched_brands)
     }
 
-    if (searchTerms.categories && searchTerms.categories.length > 0) {
-      queryBuilder.where('category_id', 'in', searchTerms.categories)
+    if (searchTerms.searched_categories && searchTerms.searched_categories.length > 0) {
+      queryBuilder.where('category_id', 'in', searchTerms.searched_categories)
     }
 
-    if (searchTerms.availability) {
-      if (searchTerms.availability === "in-stock") {
+    if (searchTerms.searched_availability) {
+      if (searchTerms.searched_availability === "in-stock") {
         queryBuilder.where('quantity_available', '>', 0);
       }
       else {
@@ -116,12 +116,12 @@ async function searchProducts(searchTerms) {
       }
     }
 
-    if (searchTerms.price_min) {
-      queryBuilder.where('price', '>=', searchTerms.price_min);
+    if (searchTerms.searched_price_min) {
+      queryBuilder.where('price', '>=', searchTerms.searched_price_min);
     }
 
-    if (searchTerms.price_max) {
-      queryBuilder.where('price', '<=', searchTerms.price_max);
+    if (searchTerms.searched_price_max) {
+      queryBuilder.where('price', '<=', searchTerms.searched_price_max);
     }
     
     const searchedProducts = await queryBuilder.fetch({
