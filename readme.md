@@ -137,7 +137,10 @@ The [cart API routes](#api-routes-for-cart) allows buyers to add, update and del
 The [order API routes](#api-routes-for-orders) allows buyers to create their orders upon successful payment, and also allows sellers to [view and manage their orders](https://github.com/f-lsq/capkeybara-frontend?tab=readme-ov-file#seller-order-page) on the client.
 
 ### Payment Processing
-The third party platform, also known as [SASS](https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-saas),  Stripe was used to handle payment processing to
+The third party platform, also known as a [SASS](https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-saas),  Stripe, was used to handle payment processing.
+
+![Payment Processing UML Sequence Diagram](assets/images/readme/payment-processing.png)
+
 1. **Reduce the time and money** required to implement such capability. This will allow resources to be diverted to developing other areas of Capkeybara.
 2. **Secure data and prevent legal repercussions** in the case of a data breach. Since Stripe stores the users' sensitive information such as their credit card information, any form of data breach and security incidents will be borne by Stripe rather than Capkeybara.
 
@@ -182,4 +185,6 @@ No test admin account will be provided.
 
 ## References
 * [Nadin, P. (2022 September 12). REST API Naming Conventions and Best Practices.](https://medium.com/@nadinCodeHat/rest-api-naming-conventions-and-best-practices-1c4e781eb6a5)
+* [Stripe. (n.d.). How Checkout works.](https://docs.stripe.com/payments/checkout/how-checkout-works?payment-ui=stripe-hosted)
+
 
